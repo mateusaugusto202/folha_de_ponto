@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- ==================== CABEÇALHO OFICIAL DA EMPRESA ==================== -->
+<div class="container-fluid p-0 mb-5">
+    <div class="documento-oficial shadow-lg">
+        <!-- Logo e Título -->
+        <div class="header-principal">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h2 class="titulo-documento mb-0">FOLHA DE PONTO</h2>
+                    <p class="subtitulo-documento mb-0">Registro de Frequência - {{ folha.mes }}/{{ folha.ano }}</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="badge-oficial">
+                        <i class="fas fa-shield-alt"></i> DOCUMENTO OFICIAL
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dados da Empresa -->
+        <div class="secao-dados-empresa">
+            <div class="titulo-secao-doc">
+                <i class="fas fa-building"></i> DADOS DA EMPRESA
+            </div>
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <div class="campo-info">
+                        <label>Razão Social</label>
+                        <div class="valor-info">Empresária Online Ltda</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="campo-info">
+                        <label>CNPJ</label>
+                        <div class="valor-info">46.081.224/0001-76</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="campo-info">
+                        <label>Endereço</label>
+                        <div class="valor-info">Av. Castelo Branco, 762 / sl 403</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="campo-info">
+                        <label>Bairro</label>
+                        <div class="valor-info">Horto</div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="campo-info">
+                        <label>Cidade</label>
+                        <div class="valor-info">Ipatinga</div>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="campo-info">
+                        <label>UF</label>
+                        <div class="valor-info">MG</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dados do Funcionário -->
+        <div class="secao-dados-funcionario">
+            <div class="titulo-secao-doc">
+                <i class="fas fa-user-tie"></i> DADOS DO COLABORADOR
+            </div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="campo-info destaque">
+                        <label>Nome Completo</label>
+                        <div class="valor-info">{{ funcionario.nome }}</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="campo-info">
+                        <label>Função</label>
+                        <div class="valor-info">{{ funcionario.cargo or 'Analista de Sistemas' }}</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="campo-info">
+                        <label>Data de Admissão</label>
+                        <div class="valor-info">{{ funcionario.data_admissao.strftime('%d/%m/%Y') if funcionario.data_admissao else '06/10/2022' }}</div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="campo-info">
+                        <label>Horário de Trabalho</label>
+                        <div class="valor-info">{{ funcionario.jornada or '09:00 - 18:00 / 08:00 - 12:00' }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== REGISTROS DE PONTO ==================== -->
+<div class="container mb-5">
+    <div class="card card-registros shadow">
+        <div class="card-header-custom">
+            <i class="fas fa-clock"></i> REGISTROS DO PERÍODO
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-registros mb-0">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-calendar-day"></i> Data</th>
+                            <th><i class="fas fa-calendar-week"></i> Dia da Semana</th>
+                            <th><i class="fas fa-sign-in-alt"></i> Entrada</th>
+                            <th><i class="fas fa-utensils"></i> Início Intervalo</th>
+                            <th><i class="fas fa-undo"></i> Retorno</th>
+                            <th><i class="fas fa-sign-out-alt"></i> Saída</th>
+                            <th><i class="fas fa-clock"></i> Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ponto in pontos %}
+                        <tr>
+                            <td class="data-col">{{ ponto.data_registro.strftime('%d/%m/%Y') }}</td>
+                            <td>{{ ponto.data_registro.strftime('%A') }}</td>
+                            <td>{{ ponto.entrada or '-' }}</td>
+                            <td>{{ ponto.saida_almoco or '-' }}</td>
+                            <td>{{ ponto.retorno_almoco or '-' }}</td>
+                            <td>{{ ponto.saida or '-' }}</td>
+                            <td><strong>{{ ponto.total_trabalhado or '-' }}</strong></td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">Nenhum registro de ponto encontrado para este período.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== ÁREA DE ASSINATURA (VISUALIZAÇÃO) ==================== -->
+<div class="container mb-5">
+    <div class="card shadow-lg" style="border: 2px solid #28a745;">
+        <div class="card-header text-white text-center" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); padding: 20px;">
+            <h4 class="mb-0">
+                <i class="fas fa-check-circle"></i> DOCUMENTO ASSINADO DIGITALMENTE
+            </h4>
+        </div>
+        <div class="card-body p-5">
+            <div class="assinatura-visualizacao">
+                <!-- Preview da Assinatura -->
+                <div class="preview-assinatura-final">
+                    {% if folha.tipo_assinatura == 'manual' and folha.assinatura_imagem %}
+                        <img src="{{ folha.assinatura_imagem }}" alt="Assinatura" class="imagem-assinatura-visualizacao">
+                    {% else %}
+                        <div class="assinatura-automatica-visualizacao">
+                            {{ funcionario.nome }}
+                        </div>
+                    {% endif %}
+                    <div class="linha-assinatura-visualizacao"></div>
+                </div>
+                
+                <!-- Informações da Assinatura -->
+                <div class="info-assinatura-final">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <i class="fas fa-user"></i>
+                                <strong>Assinado por:</strong> {{ funcionario.nome }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <i class="fas fa-calendar-check"></i>
+                                <strong>Data/Hora:</strong> {{ folha.data_assinatura.strftime('%d/%m/%Y às %H:%M') if folha.data_assinatura else 'Não disponível' }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="info-item">
+                                <i class="fas fa-certificate"></i>
+                                <strong>Tipo:</strong> Assinatura Digital {{ '(Manuscrita)' if folha.tipo_assinatura == 'manual' else '(Automática)' }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Selo de Autenticidade -->
+                <div class="selo-autenticidade">
+                    <div class="selo-icone">
+                        <i class="fas fa-stamp"></i>
+                    </div>
+                    <div class="selo-texto">
+                        <strong>DOCUMENTO AUTÊNTICO</strong><br>
+                        <small>Este documento foi assinado digitalmente e tem validade jurídica</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== BOTÕES DE AÇÃO (ADMIN) ==================== -->
+<div class="container mb-5 no-print">
+    <div class="row g-3">
+        <div class="col-md-4">
+            <a href="{{ url_for('gerar_pdf_folha', folha_id=folha.id) }}" class="btn btn-danger btn-lg w-100">
+                <i class="fas fa-file-pdf"></i> Baixar em PDF
+            </a>
+        </div>
+        <div class="col-md-4">
+            <button onclick="window.print()" class="btn btn-secondary btn-lg w-100">
+                <i class="fas fa-print"></i> Imprimir
+            </button>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('painel_rh') }}" class="btn btn-outline-primary btn-lg w-100">
+                <i class="fas fa-arrow-left"></i> Voltar ao Painel
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SCRIPTS ==================== -->
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-warning text-dark">
+            <h4 class="mb-0"><i class="fas fa-user-edit"></i> Ajustar Ponto: {{ funcionario['nome'] }}</h4>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Data do Registro</label>
+                        <input type="date" name="data" class="form-control" value="{{ hoje }}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Entrada</label>
+                        <input type="time" name="entrada" class="form-control" step="1">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Entrada Almoço</label>
+                        <input type="time" name="saida_almoco" class="form-control" step="1">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Volta Almoço</label>
+                        <input type="time" name="volta_almoco" class="form-control" step="1">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Saída Final</label>
+                        <input type="time" name="saida" class="form-control" step="1">
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Salvar Alterações
+                    </button>
+                    <a href="{{ url_for('dashboard_rh') }}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<hr class="my-5">
+
+<div class="card shadow mb-4">
+    <div class="card-header bg-info text-white">
+        <h5 class="mb-0"><i class="fas fa-history"></i> Histórico Recente</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Entrada</th>
+                        <th>Almoço (Saída)</th>
+                        <th>Almoço (Volta)</th>
+                        <th>Saída</th>
+                        <th>Saldo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for registro in historico %}
+                    <tr>
+                        <td>{{ registro['data_registro'].strftime('%d/%m/%Y') if registro['data_registro'] else '-' }}</td>
+                        <td>{{ registro['entrada'] or '--:--' }}</td>
+                        <td>{{ registro['saida_almoco'] or '--:--' }}</td>
+                        <td>{{ registro['volta_almoco'] or '--:--' }}</td>
+                        <td>{{ registro['saida'] or '--:--' }}</td>
+                        <td class="{{ 'text-danger' if registro['saldo_dia'] < 0 else 'text-success' }}">
+                            {{ registro['saldo_dia'] }}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">Nenhum registro encontrado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

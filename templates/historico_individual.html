@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <!-- ==================== CABEÇALHO DA AUDITORIA ==================== -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <!-- Nome do funcionário auditado -->
+        <h2>
+            <i class="bi bi-person-badge"></i> Auditoria: <strong>{{ funcionario.nome }}</strong>
+        </h2>
+        
+        <!-- Botão de retorno -->
+        <a href="{{ url_for('painel_rh') }}" class="btn btn-secondary">
+    <i class="fas fa-arrow-left"></i> Voltar ao Painel
+</a>
+    </div>
+
+    <!-- ==================== TABELA DE HISTÓRICO COMPLETO ==================== -->
+    <div class="table-responsive">
+        <table class="table table-hover shadow-sm border">
+            <thead class="table-dark">
+                <tr>
+                    <th>Data do Ponto</th>
+                    <th>Entrada Digitada</th>
+                    <th>Saída Digitada</th>
+                    <!-- Coluna especial: hora real do sistema (auditoria) -->
+                    <th class="bg-primary">🕒 Hora Real (Sistema)</th>
+                    <th>Total</th>
+                    <th>Saldo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loop pelos registros do funcionário -->
+                {% for r in registros %}
+                <tr>
+                    <!-- Data do registro -->
+                    <td>{{ r.data_registro }}</td>
+                    
+                    <!-- Horário de entrada informado -->
+                    <td>
+                        <span class="badge badge-light text-dark border">{{ r.entrada }}</span>
+                    </td>
+                    
+                    <!-- Horário de saída informado -->
+                    <td>
+                        <span class="badge badge-light text-dark border">{{ r.saida }}</span>
+                    </td>
+                    
+                    <!-- IMPORTANTE: Hora real de criação do registro (auditoria) -->
+                    <!-- Permite verificar se houve fraude nos horários -->
+                    <td class="text-primary font-weight-bold">
+                        {{ r.criado_em.strftime('%H:%M:%S') if r.criado_em else 'Sem registro' }}
+                    </td>
+                    
+                    <!-- Total de horas trabalhadas -->
+                    <td>{{ r.total_trabalhado }}h</td>
+                    
+                    <!-- Saldo do dia (positivo = verde, negativo = vermelho) -->
+                    <td class="{{ 'text-danger' if r.saldo_dia < 0 else 'text-success' }} font-weight-bold">
+                        {{ r.saldo_dia }}h
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- NOTAS DE AUDITORIA:
+     - A coluna "Hora Real (Sistema)" é crucial para detectar fraudes
+     - Compara o horário informado pelo funcionário vs horário do servidor
+     - Exemplo: Se entrada diz "08:00" mas criado_em é "09:30", há discrepância
+     - Saldo negativo indica horas devidas
+     - Saldo positivo indica banco de horas
+-->
+{% endblock %}

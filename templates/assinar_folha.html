@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- ==================== CABEÇALHO OFICIAL DA EMPRESA ==================== -->
+<div class="container-fluid p-0 mb-5">
+    <div class="documento-oficial shadow-lg">
+        <!-- Logo e Título -->
+        <div class="header-principal">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h2 class="titulo-documento mb-0">FOLHA DE PONTO</h2>
+                    <p class="subtitulo-documento mb-0">Registro de Frequência - {{ folha.mes }}/{{ folha.ano }}</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="badge-oficial">
+                        <i class="fas fa-shield-alt"></i> DOCUMENTO OFICIAL
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dados da Empresa -->
+        <div class="secao-dados-empresa">
+            <div class="titulo-secao-doc">
+                <i class="fas fa-building"></i> DADOS DA EMPRESA
+            </div>
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <div class="campo-info">
+                        <label>Razão Social</label>
+                        <div class="valor-info">Empresária Online Ltda</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="campo-info">
+                        <label>CNPJ</label>
+                        <div class="valor-info">46.081.224/0001-76</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="campo-info">
+                        <label>Endereço</label>
+                        <div class="valor-info">Av. Castelo Branco, 762 / sl 403</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="campo-info">
+                        <label>Bairro</label>
+                        <div class="valor-info">Horto</div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="campo-info">
+                        <label>Cidade</label>
+                        <div class="valor-info">Ipatinga</div>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="campo-info">
+                        <label>UF</label>
+                        <div class="valor-info">MG</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dados do Funcionário -->
+        <div class="secao-dados-funcionario">
+            <div class="titulo-secao-doc">
+                <i class="fas fa-user-tie"></i> DADOS DO COLABORADOR
+            </div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="campo-info destaque">
+                        <label>Nome Completo</label>
+                        <div class="valor-info">{{ current_user.nome }}</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="campo-info">
+                        <label>Função</label>
+                        <div class="valor-info">{{ dados_usuario.cargo or 'Analista de Sistemas' }}</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="campo-info">
+                        <label>Data de Admissão</label>
+                        <div class="valor-info">{{ dados_usuario.data_admissao.strftime('%d/%m/%Y') if dados_usuario.data_admissao else '06/10/2022' }}</div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="campo-info">
+                        <label>Horário de Trabalho</label>
+                        <div class="valor-info">{{ dados_usuario.jornada or '09:00 - 18:00 / 08:00 - 12:00' }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== REGISTROS DE PONTO ==================== -->
+<div class="container mb-5">
+    <div class="card card-registros shadow">
+        <div class="card-header-custom">
+            <i class="fas fa-clock"></i> REGISTROS DO PERÍODO
+        </div>
+        <div class="card-body p-0">
+            <div class="instrucao-revisao no-print">
+                <i class="fas fa-info-circle"></i>
+                <strong>Atenção:</strong> Revise cuidadosamente todos os horários antes de prosseguir com a assinatura.
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-registros mb-0">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-calendar-day"></i> Data</th>
+                            <th><i class="fas fa-sign-in-alt"></i> Entrada</th>
+                            <th><i class="fas fa-utensils"></i> Início Intervalo</th>
+                            <th><i class="fas fa-undo"></i> Retorno</th>
+                            <th><i class="fas fa-sign-out-alt"></i> Saída</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ponto in pontos %}
+                        <tr>
+                            <td class="data-col">{{ ponto.data_registro.strftime('%d/%m/%Y') }}</td>
+                            <td>{{ ponto.entrada or '-' }}</td>
+                            <td>{{ ponto.saida_intervalo or '-' }}</td>
+                            <td>{{ ponto.retorno_intervalo or '-' }}</td>
+                            <td>{{ ponto.saida or '-' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== ÁREA DE ASSINATURA ==================== -->
+<div class="container mb-5 no-print">
+    <div class="card card-assinatura shadow-lg">
+        <div class="card-header-assinatura">
+            <i class="fas fa-signature"></i> ASSINATURA DIGITAL
+        </div>
+        <div class="card-body">
+            
+            <!-- Preview da Assinatura Automática -->
+            <div class="area-assinatura-wrapper">
+                <p class="texto-instrucao-simples">
+                    <i class="fas fa-info-circle"></i>
+                    Sua assinatura digital será gerada automaticamente com seu nome cadastrado
+                </p>
+                
+                <div class="preview-assinatura-auto">
+                    <div class="assinatura-automatica">
+                        <span id="texto-assinatura">{{ current_user.nome }}</span>
+                    </div>
+                    <div class="linha-assinatura"></div>
+                </div>
+                <p class="texto-certificacao">
+                    <i class="fas fa-certificate"></i>
+                    Assinatura digital com validade jurídica equivalente à manuscrita
+                </p>
+            </div>
+
+            <!-- Formulário de Envio -->
+            <form action="{{ url_for('salvar_assinatura', folha_id=folha.id) }}" 
+                  method="POST" 
+                  id="form-salvar_assinatura"
+                  class="mt-4">
+                <input type="hidden" name="assinatura_b64" id="assinatura_b64" value="AUTOGENERATED">
+                <input type="hidden" name="metodo" id="metodo" value="automatica">
+                
+                <div class="area-confirmacao">
+                    <div class="checkbox-confirmacao">
+                        <input type="checkbox" id="confirmo" required>
+                        <label for="confirmo">
+                            Declaro que revisei e concordo com todas as informações acima, 
+                            e que minha assinatura digital tem a mesma validade de uma assinatura manuscrita.
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-confirmar-final" id="btn-enviar">
+                        <i class="fas fa-check-circle"></i> CONFIRMAR E ENVIAR ASSINATURA
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== ÁREA DA ASSINATURA NO PDF ==================== -->
+<div class="assinatura-pdf-container print-only">
+    <div class="titulo-assinatura-pdf">ASSINATURA DO COLABORADOR</div>
+    {% if folha.tipo_assinatura == 'manual' and folha.assinatura_imagem %}
+        <img src="{{ folha.assinatura_imagem }}" alt="Assinatura" class="imagem-assinatura-pdf">
+    {% else %}
+        <div class="assinatura-automatica-pdf">{{ current_user.nome }}</div>
+    {% endif %}
+    <div class="linha-assinatura-pdf"></div>
+    <div class="info-assinatura-pdf">
+        <strong>{{ current_user.nome }}</strong><br>
+        Assinado digitalmente em: {{ folha.data_assinatura.strftime('%d/%m/%Y às %H:%M') if folha.data_assinatura else 'Pendente' }}
+    </div>
+</div>
+
+<!-- ==================== SCRIPTS ==================== -->
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<script>
+    // ==================== VALIDAÇÃO E ENVIO ====================
+    document.getElementById('form-salvar_assinatura').addEventListener('submit', function(e) {
+        const btnEnviar = document.getElementById('btn-enviar');
+        
+        // Feedback de envio
+        btnEnviar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+        btnEnviar.disabled = true;
+    });
+</script>
+
+{% endblock %}

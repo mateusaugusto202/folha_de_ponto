@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 10px; }
+        .header-table, .data-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        .header-table td, .data-table td, .data-table th { border: 1px solid black; padding: 5px; }
+        .title { font-weight: bold; background-color: #f0f0f0; }
+        .footer { margin-top: 50px; text-align: center; }
+        .signature-line { border-top: 1px solid black; width: 300px; margin: 0 auto; padding-top: 5px; }
+        .signature-img { max-width: 250px; height: auto; }
+    </style>
+</head>
+<body>
+    <table class="header-table">
+        <tr>
+            <td colspan="2" class="title">EMPREGADOR / NOME - EMPRESA:<br><strong>Empresária Online</strong></td>
+            <td class="title">CEI/CNPJ:<br><strong>46.081.224/0001-76</strong></td>
+        </tr>
+        <tr>
+            <td colspan="3">ENDEREÇO: <strong>Av. Castelo Branco, 762 / sl 403 - Horto - Ipatinga/MG</strong></td>
+        </tr>
+        <tr>
+            <td>EMPREGADO(A):<br><strong>{{ funcionario.nome }}</strong></td>
+            <td>HORÁRIO DE TRABALHO:<br><strong>09:00 - 18:00</strong></td>
+            <td>DATA ADMISSÃO:<br><strong>{{ funcionario.data_admissao }}</strong></td>
+        </tr>
+    </table>
+
+    <table class="data-table">
+        <thead>
+            <tr style="background-color: black; color: white;">
+                <th>Data</th>
+                <th>Dia</th>
+                <th>Entrada</th>
+                <th>Almoço</th>
+                <th>Retorno</th>
+                <th>Saída</th>
+                <th>Total Horas</th>
+                <th>Observação</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dia in dias_do_mes %}
+            <tr>
+                <td>{{ dia.data }}</td>
+                <td>{{ dia.semana }}</td>
+                <td>{{ dia.entrada or '' }}</td>
+                <td>{{ dia.saida_almoco or '' }}</td>
+                <td>{{ dia.retorno_almoco or '' }}</td>
+                <td>{{ dia.saida or '' }}</td>
+                <td>{{ dia.total or '00:00' }}</td>
+                <td>{{ dia.obs }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="footer">
+        {% if assinatura_img %}
+            <img src="{{ assinatura_img }}" class="signature-img"><br>
+        {% endif %}
+        <div class="signature-line">ASSINATURA DO COLABORADOR</div>
+    </div>
+</body>
+</html>

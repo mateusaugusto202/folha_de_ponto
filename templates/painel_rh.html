@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% if alertas_atraso %}
+    <div class="alert alert-danger shadow-sm border-left-danger" role="alert">
+        <h5 class="alert-heading">
+            <i class="fas fa-exclamation-triangle"></i> Atenção, Administrador!
+        </h5>
+        <ul class="mb-0">
+            {% for alerta in alertas_atraso %}
+                <li class="mb-3">
+                    O funcionário <strong>{{ alerta['nome'] }}</strong> ainda não iniciou o serviço hoje.
+                    <div class="mt-2">
+                        <a href="{{ url_for('editar_ponto', user_id=alerta['id']) }}" class="btn btn-warning btn-sm">
+                            <i class="fas fa-edit"></i> Editar Ponto
+                        </a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+<div class="container mt-4">
+    <div class="card shadow-sm mb-4">
+        <div class="card-body bg-white border-left-rosa"> 
+            <h5 class="saudacao-admin mb-0">
+                Bem-vindo, <span class="nome-admin">Administrador {{ current_user.nome }}!</span>
+            </h5>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <h3 class="titulo-secao"><i class="fas fa-user-clock me-2"></i> Solicitações de Cadastro</h3>
+    </div>
+    <hr>
+    <div class="table-responsive mb-5">
+        <table class="table table-hover table-striped shadow-sm border">
+            <thead class="table-warning">
+                <tr>
+                    <th>Nome</th><th>E-mail</th><th>CPF</th><th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for solicitacao in solicitacoes %}
+                <tr>
+                    <td>{{ solicitacao.nome }}</td>
+                    <td>{{ solicitacao.email }}</td>
+                    <td>{{ solicitacao.cpf }}</td>
+                    <td>
+                        <form action="{{ url_for('aprovar_solicitacao', solicitacao_id=solicitacao.id) }}" method="POST" class="d-inline">
+                            <select name="tipo_contrato" class="form-select form-select-sm d-inline w-auto" required>
+                                <option value="" disabled selected>Contrato...</option>
+                                <option value="CLT">CLT (8h)</option>
+                                <option value="Estagiário">Estagiário (4h)</option>
+                            </select>
+                            <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-check"></i>Aprovar</button>
+                        </form>
+                        <a href="{{ url_for('negar_solicitacao', solicitacao_id=solicitacao.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Negar?')"><i class="fas fa-times"></i>Negar</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="4" class="text-center text-muted">Nenhuma solicitação pendente.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="titulo-principal mt-4">Funcionários Ativos</h2>
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered shadow-sm align-middle">
+    <thead class="table-light">
+        <tr class="text-center">
+            <th>NOME</th>
+            <th>STATUS</th>
+            <th>CARGO/CARGA</th>
+            <th>SALDO TOTAL</th>
+            <th style="min-width: 280px;">SOLICITAR ASSINATURA</th>
+            <th style="min-width: 120px;">AÇÕES</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for usuario in usuarios %}
+        <tr>
+            <td class="fw-bold">{{ usuario.nome }}</td>
+            <td class="text-center">
+                <span class="badge rounded-pill bg-secondary px-3">OFFLINE</span>
+            </td>
+            <td class="text-center">
+                <span class="badge rounded-pill border border-danger text-danger px-2">{{ usuario.tipo_usuario.upper() }}</span><br>
+                <small class="text-muted">8.00h (Fixo)</small>
+            </td>
+            <td class="text-center fw-bold text-danger">
+                {{ formatar_horas_decimal(usuario.saldo_total or 0) }}
+            </td>
+            <td>
+                <form action="{{ url_for('solicitar_assinatura') }}" method="POST" class="d-flex gap-1 align-items-center justify-content-center">
+                    <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
+                    <input type="number" name="mes" class="form-control form-control-sm" placeholder="Mês" style="width: 60px;">
+                    <input type="number" name="ano" class="form-control form-control-sm" value="2026" style="width: 80px;">
+                    <button type="submit" class="btn btn-rosa btn-sm text-white px-3" style="background-color: #d63384; border-radius: 20px;">SOLICITAR</button>
+                </form>
+            </td>
+            <td class="text-center">
+    <div class="d-flex gap-2 justify-content-center">
+        <a href="{{ url_for('historico_individual', usuario_id=usuario.id) }}" 
+           class="btn btn-sm btn-outline-rosa" title="Histórico">
+            Historico
+        </a>
+        
+        {% if usuario.tipo_usuario != 'admin' %}
+        <a href="{{ url_for('promover_admin', usuario_id=usuario.id) }}" 
+           class="btn btn-sm btn-warning" title="Promover">
+            Promover
+        </a>
+        {% endif %}
+    </div>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+    </div>
+
+    <div class="mt-5 mb-5">
+        <h3 class="titulo-secao"><i class="fas fa-file-signature me-2"></i> Status das Folhas de Ponto</h3>
+        <div class="table-responsive">
+            <table class="table table-sm table-hover border shadow-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Funcionário</th><th>Referência</th><th>Status</th><th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+    {% for folha in folhas_status %}
+    <tr>
+        <td>{{ folha.nome }}</td>
+        <td>{{ folha.mes }}/{{ folha.ano }}</td>
+        <td>
+            <span class="badge {% if folha.status == 'pendente' %}bg-warning text-dark{% elif folha.status.lower() in ['assinada', 'assinado'] %}bg-info{% else %}bg-danger{% endif %}">
+                {{ folha.status.upper() }}
+            </span>
+        </td>
+        
+        <td>
+            {% if folha.status.lower() in ['assinada', 'assinado'] %}
+                <a href="{{ url_for('admin_ver_folha', folha_id=folha.id) }}" 
+                   class="btn btn-info btn-sm text-white" title="Visualizar Folha">
+                   <i class="fas fa-eye"></i> Ver
+                </a>
+
+                <a href="{{ url_for('admin_ver_folha', folha_id=folha.id) }}?print=true" 
+                   target="_blank"
+                   class="btn btn-danger btn-sm" title="Baixar PDF">
+                   <i class="fas fa-file-pdf"></i> PDF
+                </a>
+            {% else %}
+                <span class="text-muted small">Aguardando...</span>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== NOTAS DE FUNCIONALIDADE ==================== -->
+<!--
+FLUXO DO PAINEL RH:
+
+1. ALERTAS DE ATRASO
+   - Sistema compara hora atual com horário limite (08:00)
+   - Se funcionário não bateu ponto e passou do horário, gera alerta
+   - Permite ação rápida do RH
+
+2. SOLICITAÇÕES PENDENTES
+   - Novas solicitações de cadastro aparecem aqui
+   - RH escolhe tipo de contrato:
+     * CLT → 8h/dia
+     * Estagiário → 4h/dia
+   - Ao aprovar: cria usuário na tabela 'usuarios'
+   - Ao negar: marca solicitação como 'reprovado'
+
+3. FUNCIONÁRIOS ATIVOS
+   - Lista todos com status 'ativo'
+   - STATUS ONLINE/OFFLINE:
+     * Online = tem entrada hoje E não tem saída
+     * Offline = não tem entrada OU já saiu
+   - SALDO TOTAL:
+     * Verde = banco de horas positivo
+     * Vermelho = deve horas
+   - AÇÕES:
+     * Promover → muda tipo_usuario para 'admin'
+     * Histórico → exibe todos os pontos com auditoria
+
+MELHORIAS FUTURAS:
+- Filtrar por data
+- Exportar relatórios
+- Gráficos de produtividade
+- Alertas por email/SMS
+- Edição de horários pelo admin
+-->
+{% endblock %}
+
+<script>
+    // Atualiza o painel automaticamente a cada 30 segundos
+    setTimeout(function(){
+       window.location.reload();
+    }, 30000); 
+</script>
