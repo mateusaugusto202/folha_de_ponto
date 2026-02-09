@@ -176,11 +176,11 @@ def calcular_horas(h1, h2):
 import os
 
 DB_CONFIG = {
-    "host": os.getenv("DB_HOST"),
-    "user": os.getenv("DB_USER"),
-    "password": os.getenv("DB_PASSWORD"), 
-    "database": os.getenv("DB_NAME"),
-    "port": int(os.getenv("DB_PORT", 15998)), # O int() transforma o texto em número
+    "host": os.getenv("DB_HOST"),        # Pega o endereço da Aiven que você salvou no Render
+    "user": os.getenv("DB_USER"),        # Pega o usuário
+    "password": os.getenv("DB_PASSWORD"), # Pega a senha
+    "database": os.getenv("DB_NAME"),    # Pega o nome do banco
+    "port": int(os.getenv("DB_PORT", 15998)), # Pega a porta (e garante que é um número)
     "charset": "utf8mb4",
     "cursorclass": pymysql.cursors.DictCursor
 }
