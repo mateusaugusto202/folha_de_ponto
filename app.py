@@ -12,9 +12,13 @@ from functools import wraps
 # ==================== CONFIGURAÇÃO DA APLICAÇÃO ====================
 app = Flask(__name__)
 
-# Configuração do Motor de PDF
-WKHTMLTOPDF_PATH = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
-PDF_CONFIG = pdfkit.configuration(wkhtmltopdf=WKHTMLTOPDF_PATH)
+# Configuração Inteligente do Motor de PDF (Windows vs Linux)
+if platform.system() == "Windows":
+    WKHTMLTOPDF_PATH = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
+    PDF_CONFIG = pdfkit.configuration(wkhtmltopdf=WKHTMLTOPDF_PATH)
+else:
+    # No Render (Linux), ele tentará usar o executável instalado no sistema
+    PDF_CONFIG = pdfkit.configuration()
 
 PDF_OPTIONS = {
     'page-size': 'A4',
@@ -30,9 +34,14 @@ PDF_OPTIONS = {
 # ==================== CONFIGURAÇÃO DA APLICAÇÃO ====================
 app = Flask(__name__)
 
-# Definimos o caminho do executável uma única vez [cite: 2026-01-08]
-WKHTMLTOPDF_PATH = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
-PDF_CONFIG = pdfkit.configuration(wkhtmltopdf=WKHTMLTOPDF_PATH)
+# Configuração Inteligente: Windows vs Nuvem (Linux)
+if platform.system() == "Windows":
+    # No seu computador, usa o caminho do C:
+    WKHTMLTOPDF_PATH = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
+    PDF_CONFIG = pdfkit.configuration(wkhtmltopdf=WKHTMLTOPDF_PATH)
+else:
+    # No Render (Linux), não passamos caminho, ele usa o padrão do sistema
+    PDF_CONFIG = pdfkit.configuration()
 
 PDF_OPTIONS = {
     'page-size': 'A4',
@@ -162,9 +171,9 @@ def calcular_horas(h1, h2):
 
 # ==================== CONFIGURAÇÃO DO BANCO DE DADOS ====================
 
+
 import os
 
-# Configuração que se adapta ao ambiente (PC ou Nuvem)
 DB_CONFIG = {
     "host": os.getenv("DB_HOST", "localhost"),
     "user": os.getenv("DB_USER", "root"),
@@ -544,12 +553,18 @@ from flask import make_response, render_template, flash, redirect, url_for
 @app.route('/gerar_pdf_folha/<int:folha_id>')
 @login_required
 def gerar_pdf_folha(folha_id):
-    # Configuração do caminho do executável que você instalou
-    # Se você instalou na pasta padrão, o caminho é este:
-    path_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
-    config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
+    # --- AJUSTE PARA FUNCIONAR NO WINDOWS E NO RENDER (LINUX) ---
+    if platform.system() == "Windows":
+        path_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
+        config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
+    else:
+        # No Linux (Render), o wkhtmltopdf precisa ser instalado via buildscript
+        # ou estar no PATH. Se estiver instalado, o pdfkit acha sozinho:
+        config = pdfkit.configuration() 
+    # -----------------------------------------------------------
 
     db = get_db()
+    # ... resto da sua função igual ...
     with db.cursor(pymysql.cursors.DictCursor) as cur:
         # 1. Busca os dados da folha
         cur.execute("""
