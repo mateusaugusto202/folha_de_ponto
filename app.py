@@ -1,6 +1,7 @@
 import pymysql
 import pdfkit
 import calendar
+import platform
 import os
 from datetime import datetime, date # Importado apenas uma vez
 
