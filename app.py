@@ -1402,13 +1402,13 @@ def historico(usuario_id):
 # ==================== INICIALIZAÇÃO DA APLICAÇÃO ====================
 
 if __name__ == "__main__":
-    # Debug=True permite:
-    # - Recarregamento automático ao modificar o código
-    # - Mensagens detalhadas de erro no navegador
-    # - Console interativo de debug
-    # 
-    # ATENÇÃO: Sempre use debug=False em produção por questões de segurança!
-    app.run(debug=True)
+    # O Render nos diz em qual porta rodar através da variável de ambiente 'PORT'
+    # Se não encontrar (ex: no seu PC), ele usa a 5000 por padrão.
+    port = int(os.environ.get("PORT", 5000))
+    
+    # host='0.0.0.0' permite que o site seja acessado externamente
+    # debug=False é o recomendado para quando o site está "no ar"
+    app.run(host='0.0.0.0', port=port, debug=False)
 
 
 # ==================== NOTAS DE DESENVOLVIMENTO ====================
