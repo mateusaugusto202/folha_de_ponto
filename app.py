@@ -176,15 +176,14 @@ def calcular_horas(h1, h2):
 import os
 
 DB_CONFIG = {
-    "host": os.getenv("DB_HOST", "localhost"),
-    "user": os.getenv("DB_USER", "root"),
-    "password": os.getenv("DB_PASSWORD", "123456"), 
-    "database": os.getenv("DB_NAME", "folha_ponto"),
-    "port": int(os.getenv("DB_PORT", 3306)),
+    "host": os.getenv("DB_HOST"),
+    "user": os.getenv("DB_USER"),
+    "password": os.getenv("DB_PASSWORD"), 
+    "database": os.getenv("DB_NAME"),
+    "port": int(os.getenv("DB_PORT", 15998)), # O int() transforma o texto em número
     "charset": "utf8mb4",
     "cursorclass": pymysql.cursors.DictCursor
 }
-
 
 def get_db():
     """
