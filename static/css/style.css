@@ -1012,3 +1012,29 @@ textarea:focus {
         transition-duration: 0.01ms !important;
     }
 }
+
+/* ==================== SALDO CIRCLE - Indicador de Saldo ==================== */
+.saldo-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.saldo-circle.saldo-positive {
+    background-color: rgba(76, 175, 80, 0.1);
+}
+
+.saldo-circle.saldo-negative {
+    background-color: rgba(244, 67, 54, 0.1);
+}
+
+.saldo-icon.saldo-positive {
+    color: #28a745;
+}
+
+.saldo-icon.saldo-negative {
+    color: #dc3545;
+}

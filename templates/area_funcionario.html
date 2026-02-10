@@ -75,10 +75,9 @@
                         <h3 class="mb-0 mt-2 fw-bold {% if (saldo or 0) >= 0 %}text-success{% else %}text-danger{% endif %}">
                             {{ formatar_horas_decimal(saldo or 0) }}
                         </h3>
-                    </div>
-                    <div style="width: 60px; height: 60px; background: {% if (saldo or 0) >= 0 %}rgba(76, 175, 80, 0.1){% else %}rgba(244, 67, 54, 0.1){% endif %}; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas {% if (saldo or 0) >= 0 %}fa-check-circle{% else %}fa-exclamation-circle{% endif %} fa-2x" style="color: {% if (saldo or 0) >= 0 %}var(--success){% else %}var(--danger){% endif %};"></i>
-                    </div>
+                  <div class="saldo-circle {% if saldo and saldo >= 0 %}saldo-positive{% else %}saldo-negative{% endif %}">
+    <i class="fas {% if saldo and saldo >= 0 %}fa-check-circle{% else %}fa-exclamation-circle{% endif %} fa-2x saldo-icon"></i>
+</div>
                 </div>
             </div>
         </div>
