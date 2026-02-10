@@ -354,14 +354,12 @@ def area_funcionario():
  
         carga_segundos = converter_carga_para_segundos(user_data['carga_horaria'])
 
-    return render_template('area_funcionario.html', 
-                            assinaturas_pendentes=assinaturas_pendentes, # Não esqueça de passar isso!
-                            carga_horaria_segundos=carga_segundos,
-                            ponto_hoje=ponto_hoje, 
-                            historico=historico, 
-                            saldo=saldo_acumulado,
-                            hoje=hoje,
-                            hoje_formatada=hoje.strftime('%d/%m/%Y'))
+    # COMENTE o render_template original e coloque este:
+    return {
+        "saldo": saldo_val,
+        "carga": carga_segundos,
+        "usuario": user_data['id'] if user_data else "Não achou usuario"
+    }
 
 
 import calendar
