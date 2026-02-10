@@ -227,18 +227,19 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    """
-    Rota de login do sistema.
-    GET: Exibe o formulário de login
-    POST: Processa as credenciais e autentica o usuário
-    """
     if request.method == 'POST':
-        cpf_digitado = request.form.get('cpf')
+        # 1. Pegamos o que veio do formulário (ex: "000.111.222-33")
+        cpf_sujo = request.form.get('cpf')
+        
+        # 2. LINHA NOVA: Remove tudo que não for número (transforma em "00011122233")
+        cpf_digitado = ''.join(filter(str.isdigit, cpf_sujo)) if cpf_sujo else ''
+
         senha = request.form.get('senha')
-        tipo_escolhido = request.form.get('tipo_usuario')  # Tipo selecionado no formulário
+        tipo_escolhido = request.form.get('tipo_usuario')
 
         db = get_db()
         with db.cursor(pymysql.cursors.DictCursor) as cur:
+            # 3. Agora a busca usa o CPF limpo, que é como está no banco
             cur.execute("SELECT * FROM usuarios WHERE cpf = %s", (cpf_digitado,))
             user_data = cur.fetchone()
 
@@ -249,11 +250,9 @@ def login():
                 flash(f"Este CPF está cadastrado como {user_data['tipo_usuario']}. Selecione o perfil correto.", "danger")
                 return render_template('login.html')
             
-            # Cria o objeto usuário e faz login
             user_obj = Usuario(user_data)
             login_user(user_obj)
             
-            # Redireciona conforme o tipo de usuário
             if user_obj.tipo_usuario == 'admin':
                 return redirect(url_for('dashboard_rh'))
             return redirect(url_for('area_funcionario'))
