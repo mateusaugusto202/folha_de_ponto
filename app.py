@@ -228,48 +228,29 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        cpf_sujo = request.form.get('cpf')
-        # Limpa o CPF para ter apenas números
-        cpf_digitado = ''.join(filter(str.isdigit, cpf_sujo)) if cpf_sujo else ''
+        # PEGUE O CPF DIRETO (Com pontos e traços, igual salvamos no banco)
+        cpf_digitado = request.form.get('cpf') 
         
         senha = request.form.get('senha')
         tipo_escolhido = request.form.get('tipo_usuario')
 
-        # --- LOGS DE TESTE (Aparecerão no Render) ---
-        print(f">>> TENTATIVA DE LOGIN <<<")
-        print(f"CPF digitado (limpo): {cpf_digitado}")
-        print(f"Tipo selecionado no site: {tipo_escolhido}")
-
         db = get_db()
         with db.cursor(pymysql.cursors.DictCursor) as cur:
+            # O banco agora vai encontrar '000.111.222-33' porque eles são idênticos!
             cur.execute("SELECT * FROM usuarios WHERE cpf = %s", (cpf_digitado,))
             user_data = cur.fetchone()
 
-        if user_data:
-            print(f"Usuário encontrado no banco! Tipo no banco: {user_data['tipo_usuario']}")
+        if user_data and check_password_hash(user_data['senha_hash'], senha):
+            if user_data['tipo_usuario'] != tipo_escolhido:
+                flash(f"Selecione o perfil de {user_data['tipo_usuario']}.", "danger")
+                return render_template('login.html')
             
-            # Verifica a senha
-            senha_correta = check_password_hash(user_data['senha_hash'], senha)
-            print(f"A senha está correta? {senha_correta}")
-
-            if senha_correta:
-                if user_data['tipo_usuario'] != tipo_escolhido:
-                    print(f"ERRO: Conflito de tipos! Banco: {user_data['tipo_usuario']} vs Site: {tipo_escolhido}")
-                    flash(f"Este CPF está cadastrado como {user_data['tipo_usuario']}. Selecione o perfil correto.", "danger")
-                    return render_template('login.html')
-                
-                user_obj = Usuario(user_data)
-                login_user(user_obj)
-                print("Login realizado com sucesso!")
-                
-                if user_obj.tipo_usuario == 'admin':
-                    return redirect(url_for('dashboard_rh'))
-                return redirect(url_for('area_funcionario'))
-        else:
-            print("ERRO: CPF não encontrado no banco de dados.")
+            user_obj = Usuario(user_data)
+            login_user(user_obj)
+            
+            return redirect(url_for('dashboard_rh') if user_obj.tipo_usuario == 'admin' else 'area_funcionario')
 
         flash("CPF ou senha incorretos.", "danger")
-    
     return render_template('login.html')
 
 
