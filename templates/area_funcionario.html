@@ -1,61 +1,38 @@
 {% extends "base.html" %}
-
-{% block title %}Minha Folha de Ponto{% endblock %}
+{% block title %}Meu Ponto - {{ current_user.nome }}{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <!-- ==================== CABEÇALHO DA PÁGINA ==================== -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <!-- Título e botão de navegação (se for admin) -->
-        <div>
-            <h2 class="titulo-principal">Folha de Ponto</h2>
-            {% if current_user.tipo_usuario == 'admin' %}
-                <!-- Admin pode voltar para o painel administrativo -->
-                <a href="{{ url_for('dashboard_rh') }}" class="btn btn-secondary btn-sm">
-                    <i class="fas fa-arrow-left"></i> Voltar ao Painel ADM
-                </a>
-            {% endif %}
-        </div>
-        
-        <!-- Badges de identificação do usuário -->
-        <div class="text-right">
-            <span class="badge badge-primary">Funcionário: {{ current_user.nome }}</span>
-            <span class="badge badge-info">Contrato: {{ current_user.tipo_contrato }}</span>
-        </div>
+<!-- ==================== HEADER DA PÁGINA ==================== -->
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <div>
+        <h2 class="mb-0">
+            <i class="fas fa-clock"></i> Minha Folha de Ponto
+        </h2>
+        <p class="text-muted mb-0 mt-1">Bem-vindo(a), <strong class="text-rosa">{{ current_user.nome }}</strong></p>
     </div>
+    
+    {% if current_user.tipo_usuario == 'admin' %}
+    <a href="{{ url_for('rh_solicitacoes') }}" class="btn btn-outline-rosa">
+        <i class="fas fa-arrow-left"></i> Voltar ao Painel ADM
+    </a>
+    {% endif %}
+</div>
 
-    <!-- ==================== INFORMAÇÕES DE CARGA HORÁRIA E SALDO ==================== -->
-    <div class="row mb-3">
-        <div class="col-md-12">
-            <div class="d-flex justify-content-between align-items-center bg-light p-3 border rounded shadow-sm">
-                <!-- Carga horária esperada -->
-                <div>
-                    <span class="text-muted small">Carga horária diária esperada:</span>
-                    <span class="badge badge-secondary">{{ current_user.carga_horaria or 0 }}h</span>
-                </div>
-                
-                <!-- Saldo total acumulado -->
-                <div class="text-end">
-                    <span class="text-muted small">Saldo Total Acumulado:</span>
-                    <!-- Saldo positivo = verde, negativo = vermelho -->
-                    <span class="h5 mb-0 {% if saldo >= 0 %}text-success{% else %}text-danger{% endif %}" style="font-weight: bold;">
-                        {{ "%.2f"|format(saldo or 0) }}h
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {% if assinaturas_pendentes %}
+<!-- ==================== ALERTAS DE ASSINATURA PENDENTE ==================== -->
+{% if assinaturas_pendentes %}
     {% for folha in assinaturas_pendentes %}
-    <div class="alert alert-warning shadow border-left-warning fade show" role="alert">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <i class="fas fa-file-signature fa-2x me-3"></i>
-                <strong>Assinatura Pendente:</strong> 
-                Sua folha de ponto de {{ folha.mes }}/{{ folha.ano }} está pronta para conferência.
+    <div class="alert alert-warning slide-in" role="alert">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <i class="fas fa-file-signature fa-2x"></i>
+                <div>
+                    <strong>Assinatura Pendente!</strong>
+                    <p class="mb-0 mt-1">
+                        Sua folha de ponto de <strong>{{ folha.mes }}/{{ folha.ano }}</strong> está pronta para conferência.
+                    </p>
+                </div>
             </div>
-            <a href="{{ url_for('assinar_folha', folha_id=folha.id) }}" class="btn btn-dark btn-sm">
+            <a href="{{ url_for('assinar_folha', folha_id=folha.id) }}" class="btn btn-warning">
                 <i class="fas fa-pen"></i> Assinar Agora
             </a>
         </div>
@@ -63,155 +40,257 @@
     {% endfor %}
 {% endif %}
 
-    <!-- ==================== CARD DE REGISTRO DE PONTO ==================== -->
-    <div class="card shadow-sm mb-5 border-0">
-        <!-- Cabeçalho do card -->
-        <div class="card-header bg-rosa-suave d-flex justify-content-between align-items-center">
-            <h3 class="mb-0 h5 texto-rosa-marca">Registrar Ponto Online</h3>
-            <!-- Exibe a data de hoje formatada -->
-            <span class="badge badge-light texto-rosa-marca border">{{ hoje_formatada }}</span>
-        </div>
-        
-        <!-- Botão de reset (APENAS PARA DESENVOLVIMENTO) -->
-        <div class="mt-3 ml-3">
-            <!-- ATENÇÃO: Remover este botão em produção! -->
-            <a href="{{ url_for('reset_meu_ponto') }}" class="btn btn-link btn-sm text-muted">
-                <i class="fas fa-trash"></i> (Teste) Resetar meu ponto de hoje
-            </a>
-        </div>
-
-        <!-- ==================== BOTÃO DINÂMICO DE REGISTRO ==================== -->
-        <div class="card-body text-center py-4">
-            <p class="text-muted mb-4">Clique no botão abaixo para realizar sua próxima batida:</p>
-            
-            <form action="{{ url_for('registrar_ponto') }}" method="POST">
-                <!-- CASO 1: Ainda não bateu ponto hoje - ENTRADA -->
-                {% if not ponto_hoje %}
-                    <button type="submit" class="btn btn-registrar btn-lg px-5 shadow">
-                        <i class="fas fa-fingerprint"></i> REGISTRAR ENTRADA
-                    </button>
-                
-                <!-- CASO 2: Já bateu entrada, precisa iniciar almoço (se carga > 6h) -->
-                {% elif not ponto_hoje.saida_almoco and (current_user.carga_horaria * 3600) > 21600 %}
-                    <!-- 21600 segundos = 6 horas -->
-                    <button type="submit" class="btn btn-warning btn-lg px-5 shadow btn-pilula-grande">
-                        <i class="fas fa-utensils"></i> INICIAR ALMOÇO
-                    </button>
-                
-                <!-- CASO 3: Saiu para almoço, precisa retornar -->
-                {% elif ponto_hoje.saida_almoco and not ponto_hoje.retorno_almoco %}
-                    <button type="submit" class="btn btn-info btn-lg px-5 shadow btn-pilula-grande">
-                        <i class="fas fa-clock"></i> RETORNAR DO ALMOÇO
-                    </button>
-                
-                <!-- CASO 4: Retornou do almoço, precisa registrar saída final -->
-                {% elif not ponto_hoje.saida %}
-                    <button type="submit" class="btn btn-danger btn-lg px-5 shadow btn-pilula-grande">
-                        <i class="fas fa-sign-out-alt"></i> REGISTRAR SAÍDA FINAL
-                    </button>
-                
-                <!-- CASO 5: Jornada completa - apenas exibe mensagem -->
-                {% else %}
-                    <div class="alert alert-success d-inline-block px-5 btn-pilula-grande" 
-                         style="background-color: var(--rosa-principal); color: var(--rosa-escuro); border: none;">
-                        <i class="fas fa-check-double"></i> Jornada de hoje concluída!
+<!-- ==================== INFO CARDS (SALDO E CARGA HORÁRIA) ==================== -->
+<div class="row mb-4">
+    <!-- Card Carga Horária -->
+    <div class="col-md-6 mb-3 mb-md-0">
+        <div class="card border-left-rosa">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                            Carga Horária Diária
+                        </small>
+                        <h3 class="mb-0 mt-2 text-rosa fw-bold">
+                            {{ current_user.carga_horaria or 8 }}h
+                        </h3>
                     </div>
-                {% endif %}
-            </form>
+                    <div style="width: 60px; height: 60px; background: var(--rosa-claro-fundo); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-business-time fa-2x" style="color: var(--rosa-principal);"></i>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
-    <!-- ==================== TABELA DE HISTÓRICO RECENTE ==================== -->
-    <div class="card shadow-sm">
-        <div class="card-header">
-            <h3 class="h5 mb-0">Histórico Recente</h3>
+    
+    <!-- Card Saldo Total -->
+    <div class="col-md-6">
+        <div class="card border-left-rosa">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                            Saldo Total Acumulado
+                        </small>
+                        <h3 class="mb-0 mt-2 fw-bold {% if (saldo or 0) >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            {{ formatar_horas_decimal(saldo or 0) }}
+                        </h3>
+                    </div>
+                    <div style="width: 60px; height: 60px; background: {% if (saldo or 0) >= 0 %}rgba(76, 175, 80, 0.1){% else %}rgba(244, 67, 54, 0.1){% endif %}; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas {% if (saldo or 0) >= 0 %}fa-check-circle{% else %}fa-exclamation-circle{% endif %} fa-2x" style="color: {% if (saldo or 0) >= 0 %}var(--success){% else %}var(--danger){% endif %};"></i>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <div class="table-responsive">
-            <table class="table table-striped mb-0">
-                <thead>
-                    <tr>
-                        <th>Data</th>
-                        <th>Entrada</th>
-                        <th>Almoço</th>
-                        <th>Saída</th>
-                        <th>Total</th>
-                        <th>Saldo</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Loop pelos registros de ponto -->
-                    {% for ponto in historico %}
-                    <tr>
-                        <!-- Data formatada em dd/mm/yyyy -->
-                        <td>{{ ponto.data_registro.strftime('%d/%m/%Y') }}</td>
-                        
-                        <!-- Horário de entrada -->
-                        <td>{{ ponto.entrada }}</td>
-                        
-                        <!-- Horário de almoço (se houver) -->
-                        <td>
-                            {% if ponto.saida_almoco %}
-                                {{ ponto.saida_almoco }} às {{ ponto.retorno_almoco }}
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
-                        
-                        <!-- Horário de saída -->
-                        <td>{{ ponto.saida }}</td>
-                        
-                        <!-- Total de horas trabalhadas -->
-                        <td><strong>{{ ponto.total_trabalhado }}</strong></td>
-                        
-                        <!-- Saldo do dia (positivo = verde, negativo = vermelho) -->
-                        <td class="{% if (ponto.saldo_dia or 0) >= 0 %}text-success{% else %}text-danger{% endif %}">
-                            {{ "%.2f"|format(ponto.saldo_dia or 0) }}h
-                        </td>
-                    </tr>
-                    {% else %}
-                    <!-- Mensagem quando não há registros -->
-                    <tr>
-                        <td colspan="6" class="text-center">Nenhum ponto registrado ainda.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>  
     </div>
 </div>
 
-<!-- ==================== NOTAS DE DESENVOLVIMENTO ==================== -->
-<!--
-ESTRUTURA DO TEMPLATE:
+<!-- ==================== CARD PRINCIPAL - REGISTRO DE PONTO ==================== -->
+<div class="card shadow-lg mb-5">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <i class="fas fa-fingerprint"></i> Registrar Ponto Online
+            </div>
+            <span class="badge badge-light">
+                <i class="fas fa-calendar-day"></i> {{ hoje_formatada }}
+            </span>
+        </div>
+    </div>
+    
+    <div class="card-body text-center" style="padding: 3rem 2rem;">
+        <!-- Status do Dia -->
+        {% if not ponto_hoje %}
+            <div class="mb-4">
+                <div style="width: 80px; height: 80px; background: var(--rosa-claro-fundo); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-sun fa-3x" style="color: var(--rosa-principal);"></i>
+                </div>
+                <h4 class="text-rosa">Bom dia!</h4>
+                <p class="text-muted">Registre sua entrada para iniciar o expediente</p>
+            </div>
+        {% elif ponto_hoje.saida %}
+            <div class="mb-4">
+                <div style="width: 80px; height: 80px; background: rgba(76, 175, 80, 0.1); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-check-double fa-3x text-success"></i>
+                </div>
+                <h4 class="text-success">Jornada Concluída!</h4>
+                <p class="text-muted">Você já registrou todos os pontos de hoje</p>
+                
+                <!-- Resumo do Dia -->
+                <div class="row mt-4">
+                    <div class="col-6 col-md-3">
+                        <small class="text-muted d-block">Entrada</small>
+                        <strong>{{ ponto_hoje.entrada }}</strong>
+                    </div>
+                    {% if ponto_hoje.saida_almoco %}
+                    <div class="col-6 col-md-3">
+                        <small class="text-muted d-block">Almoço</small>
+                        <strong>{{ ponto_hoje.saida_almoco }}</strong>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <small class="text-muted d-block">Retorno</small>
+                        <strong>{{ ponto_hoje.retorno_almoco }}</strong>
+                    </div>
+                    {% endif %}
+                    <div class="col-6 col-md-3">
+                        <small class="text-muted d-block">Saída</small>
+                        <strong>{{ ponto_hoje.saida }}</strong>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="mb-4">
+                <div style="width: 80px; height: 80px; background: var(--rosa-claro-fundo); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <i class="fas fa-clock fa-3x" style="color: var(--rosa-principal);"></i>
+                </div>
+                <h4 class="text-rosa">Expediente em Andamento</h4>
+                <p class="text-muted">Registre seu próximo ponto</p>
+            </div>
+        {% endif %}
+        
+        <!-- BOTÃO DINÂMICO DE REGISTRO -->
+        <form action="{{ url_for('registrar_ponto') }}" method="POST" onsubmit="handleSubmit(event)">
+            {% if not ponto_hoje %}
+                <!-- ENTRADA -->
+                <button type="submit" class="btn btn-registrar" id="btn-ponto">
+                    <i class="fas fa-fingerprint"></i> REGISTRAR ENTRADA
+                </button>
+                
+            {% elif not ponto_hoje.saida_almoco and (current_user.carga_horaria > 6) %}
+                <!-- INICIAR ALMOÇO -->
+                <button type="submit" class="btn btn-warning btn-lg" id="btn-ponto" style="border-radius: var(--radius-pill); padding: 1.25rem 3rem; font-weight: 700; letter-spacing: 1px;">
+                    <i class="fas fa-utensils"></i> INICIAR ALMOÇO
+                </button>
+                
+            {% elif ponto_hoje.saida_almoco and not ponto_hoje.retorno_almoco %}
+                <!-- RETORNAR DO ALMOÇO -->
+                <button type="submit" class="btn btn-info btn-lg" id="btn-ponto" style="border-radius: var(--radius-pill); padding: 1.25rem 3rem; font-weight: 700; letter-spacing: 1px;">
+                    <i class="fas fa-undo"></i> RETORNAR DO ALMOÇO
+                </button>
+                
+            {% elif not ponto_hoje.saida %}
+                <!-- SAÍDA FINAL -->
+                <button type="submit" class="btn btn-danger btn-lg" id="btn-ponto" style="border-radius: var(--radius-pill); padding: 1.25rem 3rem; font-weight: 700; letter-spacing: 1px;">
+                    <i class="fas fa-sign-out-alt"></i> REGISTRAR SAÍDA FINAL
+                </button>
+                
+            {% else %}
+                <!-- CONCLUÍDO -->
+                <div class="alert alert-success d-inline-block px-5 py-3" style="border-radius: var(--radius-pill); border: 2px solid var(--success);">
+                    <i class="fas fa-check-double"></i> Ponto completo de hoje!
+                </div>
+            {% endif %}
+        </form>
+        
+        <!-- Botão de Reset (DESENVOLVIMENTO) -->
+        {% if current_user.tipo_usuario == 'admin' %}
+        <div class="mt-4">
+            <a href="{{ url_for('reset_meu_ponto') }}" class="btn btn-sm btn-outline-rosa" onclick="return confirm('Resetar ponto de hoje para testes?')">
+                <i class="fas fa-sync-alt"></i> Resetar Ponto (Teste)
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
 
-1. CABEÇALHO
-   - Título da página
-   - Botão de retorno para admin
-   - Identificação do usuário
+<!-- ==================== HISTÓRICO RECENTE ==================== -->
+<div class="card shadow">
+    <div class="card-header">
+        <i class="fas fa-history"></i> Histórico Recente
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Entrada</th>
+                    <th>Almoço</th>
+                    <th>Saída</th>
+                    <th>Total</th>
+                    <th>Saldo</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ponto in historico %}
+                <tr>
+                    <td>
+                        <strong>{{ ponto.data_registro.strftime('%d/%m/%Y') }}</strong>
+                        <br>
+                        <small class="text-muted">{{ ponto.data_registro.strftime('%A') }}</small>
+                    </td>
+                    <td>
+                        {% if ponto.entrada %}
+                            <span class="badge badge-success">{{ ponto.entrada }}</span>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if ponto.saida_almoco and ponto.retorno_almoco %}
+                            <small class="text-muted">{{ ponto.saida_almoco }}</small>
+                            <br>
+                            <small class="text-muted">{{ ponto.retorno_almoco }}</small>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if ponto.saida %}
+                            <span class="badge badge-danger">{{ ponto.saida }}</span>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if ponto.total_trabalhado %}
+                            <strong>{{ formatar_horas_decimal(ponto.total_trabalhado) }}</strong>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if ponto.saldo_dia is not none %}
+                            <span class="fw-bold {% if ponto.saldo_dia >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                {{ formatar_horas_decimal(ponto.saldo_dia) }}
+                            </span>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-5">
+                        <i class="fas fa-inbox fa-3x mb-3" style="opacity: 0.3;"></i>
+                        <p class="mb-0">Nenhum registro de ponto ainda.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
 
-2. INFORMAÇÕES DE SALDO
-   - Carga horária esperada
-   - Saldo total acumulado (atualizado em tempo real)
-
-3. CARD DE REGISTRO
-   - Botão dinâmico que muda conforme o estado do ponto
-   - Estados possíveis:
-     * Entrada (verde)
-     * Iniciar almoço (amarelo)
-     * Retornar do almoço (azul)
-     * Saída final (vermelho)
-     * Concluído (sucesso)
-
-4. HISTÓRICO
-   - Tabela com últimos 7 registros
-   - Cores dinâmicas para saldo positivo/negativo
-   - Formatação de datas e horários
-
-MELHORIAS FUTURAS:
-- Adicionar gráfico de produtividade
-- Permitir justificativa de atrasos
-- Exportar relatório individual
-- Notificações de lembrete
--->
+{% block extra_js %}
+<script>
+    function handleSubmit(event) {
+        const btn = document.getElementById('btn-ponto');
+        if (btn) {
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrando...';
+            btn.disabled = true;
+        }
+    }
+    
+    // Feedback visual de sucesso
+    document.addEventListener('DOMContentLoaded', function() {
+        // Se houver mensagem de sucesso, adiciona confete (opcional)
+        const successAlert = document.querySelector('.alert-success');
+        if (successAlert && successAlert.textContent.includes('registrad')) {
+            // Adiciona uma pequena celebração visual
+            successAlert.style.animation = 'fadeIn 0.5s ease-out';
+        }
+    });
+</script>
 {% endblock %}

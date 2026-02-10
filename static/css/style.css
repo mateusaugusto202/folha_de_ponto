@@ -1,1130 +1,1014 @@
-/* 1. Cores da Paleta Empresária Online */
-    :root {
-        --rosa-principal: #f8d7da; /* Rosa suave */
-        --rosa-escuro: #d63384;    /* Rosa para botões e links */
-        --bege-sofisticado: #fdf5f5; /* Fundo leve */
-        --texto-cinza: #4a4a4a;
-    }
+/* ==========================================
+   SISTEMA DE PONTO - EMPRESÁRIA ONLINE
+   Design System v2.0 - Rosa Profissional
+   Mobile First | UX/UI Moderna
+   ========================================== */
 
-    body {
-        background-color: var(--bege-sofisticado);
-        color: var(--texto-cinza);
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    .container{ 
-    max-width:900px; 
-    margin:0 auto;
-    }
-
-    .btns button{ 
-    margin-right:8px; 
-    padding:10px 14px; 
-    cursor:pointer; 
-    }
-
-    #tabela { 
-    width:100%; 
-    border-collapse:collapse; 
-    }
-
-    #tabela th, #tabela td { 
-    padding:8px; 
-    border:1px solid #ddd; 
-    text-align:center; }
-
-    .good { 
-    color:green; 
-    font-weight:bold; 
-    }
-
-    .bad { 
-    color:red; 
-    font-weight:bold; 
-    }
-
-.btn-rosa {
-        background-color: #d63384 !important;
-        color: white !important;
-        border: none;
-        transition: 0.3s;
-    }
-
-    .btn-rosa:hover {
-        background-color: #b82b6f !important;
-        transform: scale(1.05);
-    }
-
-/* Botão personalizado para combinar com o seu layout rosa */
-.btn-rosa-contorno {
-    background-color: #d63384; /* Rosa do seu sistema */
-    color: white;
-    border-radius: 20px;
-    padding: 2px 15px;
-    border: none;
+/* ==================== 1. VARIÁVEIS CSS (Design Tokens) ==================== */
+:root {
+    /* Cores Principais - Rosa Profissional */
+    --rosa-principal: #E91E63;
+    --rosa-suave: #F06292;
+    --rosa-claro-fundo: #FCE4EC;
+    --rosa-hover: #C2185B;
+    
+    /* Cores Neutras */
+    --branco: #FFFFFF;
+    --cinza-texto: #333333;
+    --cinza-secundario: #666666;
+    --cinza-claro: #E0E0E0;
+    --cinza-fundo: #F5F5F5;
+    
+    /* Cores de Status */
+    --success: #4CAF50;
+    --warning: #FF9800;
+    --danger: #F44336;
+    --info: #2196F3;
+    
+    /* Sombras */
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.12);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.16);
+    --shadow-rosa: 0 4px 12px rgba(233, 30, 99, 0.2);
+    
+    /* Raios de borda */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-pill: 50px;
+    
+    /* Transições */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
 }
 
-.btn-rosa-contorno:hover {
-    background-color: #b92a6e;
-    color: white;
+/* ==================== 2. RESET E BASE ==================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-/* Badge de cargo com contorno */
-.bg-outline-rosa {
-    border: 1px solid #d63384;
-    color: #d63384;
-    background: transparent;
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
 }
 
-.table td {
-    white-space: nowrap; 
-    vertical-align: middle;
+body {
+    font-family: 'Inter', 'Segoe UI', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--cinza-texto);
+    background: linear-gradient(135deg, #FAFAFA 0%, var(--rosa-claro-fundo) 100%);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
 }
 
-/* Ajuste para os inputs não ficarem gigantes */
-.form-control-sm {
-    padding: 0.25rem 0.5rem;
+/* ==================== 3. TIPOGRAFIA ==================== */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--rosa-principal);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+}
+
+h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); }
+h2 { font-size: clamp(1.5rem, 3.5vw, 2rem); }
+h3 { font-size: clamp(1.25rem, 3vw, 1.75rem); }
+h4 { font-size: clamp(1.1rem, 2.5vw, 1.5rem); }
+h5 { font-size: clamp(1rem, 2vw, 1.25rem); }
+h6 { font-size: clamp(0.9rem, 1.5vw, 1.1rem); }
+
+p {
+    margin-bottom: 1rem;
+    color: var(--cinza-secundario);
+}
+
+.text-muted {
+    color: var(--cinza-secundario) !important;
+}
+
+.text-small {
     font-size: 0.875rem;
-} 
-    
-    /* Estilo para os botões grandes de batida de ponto */
-    .btn-pilula-grande {
-    border-radius: 50px !important;
-    font-weight: 700 !important;
-    letter-spacing: 1px;
-    transition: 0.3s;
-    border: none !important;
-    }
+}
 
-    /* Customização específica para o botão de entrada em rosa */
-    .btn-registrar {
-    background-color: var(--rosa-escuro) !important;
-    color: white !important;
-    border-radius: 50px !important;
-    padding: 15px 40px !important;
-    font-weight: 700 !important;
-    border: none !important;
-    }
+/* ==================== 4. NAVBAR MODERNA ==================== */
+.navbar {
+    background: var(--branco) !important;
+    box-shadow: var(--shadow-md);
+    padding: 1rem 0;
+    border-bottom: 3px solid var(--rosa-principal);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
 
-    .btn-registrar:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(214, 51, 132, 0.3) !important;
-    }
-
-    .neutral { 
-    color:#333; 
-    font-weight:bold; 
-    }
-    
-    .titulo-principal {
-    color: var(--rosa-escuro) !important; /* Rosa da Empresária Online */
+.navbar-brand {
+    font-size: 1.5rem;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-top: 20px;
-    margin-bottom: 25px;
-    } 
-
-    /* Forçar a cor rosa forte em todos os títulos principais */
-    h2 {
-    color: #d63384 !important; /* Seu rosa escuro */
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-top: 30px;
-    margin-bottom: 20px;
-    }
-
-    .thead-dark th, .table thead th {
-    background-color: var(--rosa-principal) !important; /* Rosa claro igual ao topo */
-    color: var(--rosa-escuro) !important;           /* Texto em rosa escuro */
-    border-bottom: 2px solid var(--rosa-escuro) !important;
-    text-transform: uppercase;
-    font-size: 0.9rem;
-    letter-spacing: 1px;
-    }
-
-    /* 2. Nomes dos Funcionários: Rosa Escuro e Negrito */
-    .nome-funcionario {
-    color: var(--rosa-escuro) !important;
-    font-weight: 700;
-    font-size: 1.05rem;
-    display: block; /* Para o e-mail ficar na linha de baixo */
-    }
-
-    /* 3. Ajuste para as linhas da tabela não ficarem brancas demais */
-    .table td {
-    vertical-align: middle !important;
-    border-top: 1px solid var(--rosa-principal) !important;
-    }
-
-    #relogio-digital {
-    color: #d63384 !important; /* Seu rosa escuro */
-    font-weight: bold;
-    font-size: 1.1rem;
-    padding: 5px 10px;
-    border: 1px solid #f8d7da; /* Borda rosa clara para dar um charme */
-    border-radius: 8px;
-    background-color: #fff; /* Fundo branco para destacar do menu */
-    background-color: var(--bege-sofisticado) !important;
-    border: 1px solid var(--rosa-principal) !important;
-    color: var(--rosa-escuro) !important;
-    margin-top: 10px;
-    }
-
-    .navbar.bg-primary {
-    background-color: white !important; 
-    }
-    
-    /* 2. Customizando a Barra de Navegação */
-    .navbar {
-        background-color: white !important;
-        border-bottom: 3px solid var(--rosa-principal);
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    
-    /* Fundo do cabeçalho do card de cadastro */
-    .bg-rosa-escuro {
-    background-color: var(--rosa-escuro) !important;
-    }
-
-    /* Estilizando os campos de entrada (Inputs) */
-    .form-control {
-    border-radius: 8px;
-    border: 1px solid var(--rosa-principal);
-    }
-
-    .form-control:focus {
-    border-color: var(--rosa-escuro);
-    box-shadow: 0 0 0 0.2rem rgba(214, 51, 132, 0.15);
-    }
-
-    /* Botão principal de solicitar */
-    .btn-solicitar {
-    background-color: var(--rosa-escuro);
-    color: white;
-    font-weight: bold;
-    border-radius: 25px;
-    padding: 10px;
-    transition: 0.3s;
-    }
-    
-/* Padronização de todos os botões da tabela - AJUSTADO */
-.btn-sm {
-    border-radius: 20px !important;
-    font-weight: bold !important;
-    text-transform: uppercase;
-    font-size: 0.7rem !important;
-    padding: 5px 12px !important; /* Diminuímos o respiro lateral */
-    display: inline-flex;
+    color: var(--rosa-principal) !important;
+    display: flex;
     align-items: center;
-    justify-content: center;
-    min-width: 40px; /* Reduzido: agora cabe só o ícone se precisar */
-    transition: 0.2s;
-    /* REMOVEMOS o 'border: none !important' daqui para permitir botões com contorno */
+    gap: 0.75rem;
+    transition: var(--transition-fast);
 }
 
-.btn-solicitar-ponto {
-    background-color: var(--rosa-escuro) !important;
-    color: white !important;
-    border: none !important;
-    min-width: 100px; /* Esse sim pode ser largo */
+.navbar-brand:hover {
+    transform: translateX(5px);
 }
 
-/* 3. Botão Amarelo (Promover) - Vamos deixá-lo mais elegante */
-    .btn-warning {
-    background-color: #ffc107 !important;
-    border: none !important;
-    border-radius: 50px !important;
-    color: #212529 !important;
-    font-weight: 600 !important;
-    }
-
-/* Cor específica para o Histórico (Rosa da Marca) */
-.btn-primary, .btn-solicitar {
-    background-color: #d63384 !important;
-    color: white !important;
+.navbar-brand img {
+    height: 45px;
+    width: auto;
 }
 
-.btn-sm:hover {
-    filter: brightness(90%);
-    transform: scale(1.02);
-}
-
-    /* 1. Botão Principal (Rosa) - Ex: Entrar, Solicitar Aprovação */
-    .btn-solicitar, .btn-primary {
-    background-color: #d63384 !important;
-    border: none !important;
-    border-radius: 50px !important; /* Formato pílula super moderno */
-    font-weight: 600 !important;
-    padding: 10px 20px !important;
-    transition: all 0.3s ease;
-    }
-
-    .btn-solicitar:hover, .btn-primary:hover {
-    background-color: #b02a6a !important;
-    transform: translateY(-2px); /* Efeito de levante ao passar o mouse */
-    box-shadow: 0 4px 8px rgba(214, 51, 132, 0.3);
-    }
-
-    /* 2. Botão de Contorno (Para "Fazer Login" ou "Solicitar Cadastro") */
-    .btn-outline-primary, .btn-outline-rosa {
-    color: #d63384 !important;
-    border: 2px solid #d63384 !important;
-    border-radius: 50px !important;
-    background: transparent !important;
-    font-weight: 600 !important;
-    }
-
-    .btn-outline-primary:hover, .btn-outline-rosa:hover {
-    background-color: #fce4ec !important; /* Fundo rosa clarinho no hover */
-    color: #d63384 !important;
-    }
-
-    /* 4. Ajuste no Seletor (Aquele menu de "Administrador/Funcionário") */
-    select.form-control {
-    border-radius: 10px !important;
-    border: 1px solid #f8bbd0 !important;
-    height: 45px !important;
-    }
-
-    /* 1. Estilo Pílula para os Status */
-    .badge {
-    padding: 6px 12px !important;
-    border-radius: 30px !important; /* Deixa arredondado igual ao botão Sair */
-    font-weight: 600 !important;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    border: 1px solid transparent;
-    }
-
-    /* 2. Status Offline - Cinza Suave */
-    .badge-secondary {
-    background-color: #f1f3f5 !important;
-    color: #6c757d !important;
-    border-color: #dee2e6 !important;
-    }
-
-    /* 3. Status Online - Rosa Brilhante (Substituindo o verde) */
-    .badge-success {
-    background-color: #fce4ec !important; /* Rosa bem clarinho */
-    color: #d63384 !important;           /* Rosa escuro da marca */
-    border-color: #f8bbd0 !important;
-    }
-
-    /* 4. Cargo Atual - Azul Tiffany ou Rosa Médio */
-    .badge-info {
-    background-color: #e0f7fa !important; /* Azul bem claro para diferenciar do status */
-    color: #00838f !important;
-    border-color: #b2ebf2 !important;
-    }
-
-    .navbar-brand, .nav-link {
-        color: var(--rosa-escuro) !important;
-        font-weight: 600;
-    }
-
-    /* 4. Ajustar os Badges de Cargo (admin) que estão azuis */
-    .badge.bg-info, .badge.bg-primary {
-    background-color: var(--rosa-principal) !important;
-    color: var(--rosa-escuro) !important;
-    border: 1px solid var(--rosa-escuro);
-    }
-
-    /* 3. Customizando Botões e Cards */
-    .btn-primary {
-        background-color: var(--rosa-escuro) !important;
-        border-color: var(--rosa-escuro) !important;
-    }
-
-    .card {
-        border: none;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
-    }
-
-    .table-warning {
-        background-color: var(--rosa-principal) !important;
-        color: #856404;
-    }
-
-    /* Customizando o botão de Sair para dar leitura */
-    .btn-logout {
-        background-color: #d63384 !important; /* O rosa escuro da marca */
-        color: white !important;              /* Texto branco para contraste total */
-        border-radius: 20px;                  /* Bordas arredondadas (estilo sofisticado) */
-        padding: 5px 20px;
-        font-weight: bold;
-        border: none;
-        transition: 0.3s;
-    }
-
-    .btn-logout:hover {
-        background-color: #b02a6a !important; /* Um rosa ainda mais escuro ao passar o mouse */
-        color: white !important;
-        box-shadow: 0 4px 8px rgba(214, 51, 132, 0.3);
-    }
-
-    .saudacao-admin {
-    color: #4a4a4a; /* Cinza escuro para o "Bem-vindo" */
+.nav-link {
+    color: var(--cinza-texto) !important;
     font-weight: 500;
+    padding: 0.5rem 1rem !important;
+    border-radius: var(--radius-pill);
+    transition: var(--transition-fast);
 }
 
-.nome-admin {
-    color: #d63384 !important; /* Rosa escuro para o nome */
-    font-weight: 700;
-    text-transform: capitalize; /* Garante a primeira letra maiúscula */
+.nav-link:hover {
+    background: var(--rosa-claro-fundo);
+    color: var(--rosa-principal) !important;
 }
 
-.border-left-rosa {
-    border-left: 5px solid #d63384 !important;
-    border-radius: 8px;
-}   
-
-.titulo-secao {
-    color: #d63384; /* Rosa escuro da marca */
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 1.2rem;
-    position: relative;
-    margin-bottom: 25px;
+/* Botão Sair */
+.btn-logout {
+    background: var(--rosa-principal);
+    color: var(--branco) !important;
+    padding: 0.5rem 1.5rem;
+    border-radius: var(--radius-pill);
+    font-weight: 600;
+    border: none;
+    transition: var(--transition-normal);
+    text-decoration: none;
     display: inline-block;
 }
 
-.titulo-secao::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -8px;
-    width: 50px;
-    height: 4px;
-    background-color: #f8d7da; /* Rosa claro para a linha */
-    border-radius: 2px;
+.btn-logout:hover {
+    background: var(--rosa-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-rosa);
 }
 
-/* ==================== PÁGINA DE ASSINATURA DE FOLHA DE PONTO ==================== */
-
-/* ==================== ANIMAÇÕES ==================== */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+/* Relógio Digital */
+#relogio-digital {
+    background: var(--rosa-claro-fundo);
+    color: var(--rosa-principal);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 1.1rem;
+    border: 2px solid var(--rosa-suave);
+    font-variant-numeric: tabular-nums;
 }
 
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-10px); }
-    75% { transform: translateX(10px); }
+/* ==================== 5. SISTEMA DE BOTÕES ==================== */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-pill);
+    font-weight: 600;
+    border: none;
+    transition: var(--transition-normal);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    font-size: 1rem;
 }
 
-/* ==================== DOCUMENTO OFICIAL ==================== */
-.documento-oficial {
-    background: white;
-    border-radius: 12px;
+/* Botão Primário - Rosa */
+.btn-primary,
+.btn-rosa,
+.btn-solicitar,
+.btn-registrar {
+    background: linear-gradient(135deg, var(--rosa-principal) 0%, var(--rosa-suave) 100%);
+    color: var(--branco);
+    box-shadow: var(--shadow-rosa);
+}
+
+.btn-primary:hover,
+.btn-rosa:hover,
+.btn-solicitar:hover,
+.btn-registrar:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(233, 30, 99, 0.3);
+    background: linear-gradient(135deg, var(--rosa-hover) 0%, var(--rosa-principal) 100%);
+}
+
+/* Botão Outline Rosa */
+.btn-outline-rosa,
+.btn-outline-primary {
+    background: transparent;
+    color: var(--rosa-principal) !important;
+    border: 2px solid var(--rosa-principal) !important;
+}
+
+.btn-outline-rosa:hover,
+.btn-outline-primary:hover {
+    background: var(--rosa-claro-fundo) !important;
+    border-color: var(--rosa-suave) !important;
+    transform: translateY(-2px);
+}
+
+/* Botões de Tamanhos */
+.btn-lg {
+    padding: 1rem 2.5rem;
+    font-size: 1.125rem;
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    border-radius: var(--radius-md);
+}
+
+/* Botões de Status */
+.btn-success {
+    background: var(--success);
+    color: var(--branco);
+}
+
+.btn-warning {
+    background: var(--warning);
+    color: var(--branco);
+}
+
+.btn-danger {
+    background: var(--danger);
+    color: var(--branco);
+}
+
+.btn-info {
+    background: var(--info);
+    color: var(--branco);
+}
+
+.btn-secondary {
+    background: var(--cinza-claro);
+    color: var(--cinza-texto);
+}
+
+.btn-success:hover,
+.btn-warning:hover,
+.btn-danger:hover,
+.btn-info:hover,
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+    box-shadow: var(--shadow-md);
+}
+
+/* Botão Desabilitado */
+.btn:disabled,
+.btn.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* Botão Block (largura total) */
+.btn-block {
+    width: 100%;
+    display: flex;
+}
+
+/* ==================== 6. CARDS MODERNOS ==================== */
+.card {
+    background: var(--branco);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: none;
     overflow: hidden;
-    border: 1px solid #e0e0e0;
+    transition: var(--transition-normal);
+    margin-bottom: 1.5rem;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--rosa-principal) 0%, var(--rosa-suave) 100%);
+    color: var(--branco);
+    padding: 1.25rem 1.5rem;
+    border-bottom: none;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-footer {
+    background: var(--cinza-fundo);
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--cinza-claro);
+}
+
+/* Card com borda rosa à esquerda */
+.border-left-rosa {
+    border-left: 4px solid var(--rosa-principal) !important;
+}
+
+/* ==================== 7. FORMULÁRIOS ==================== */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label,
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--cinza-texto);
+    font-size: 0.95rem;
+}
+
+.form-control,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
+select,
+textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--cinza-claro);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    transition: var(--transition-fast);
+    background: var(--branco);
+    color: var(--cinza-texto);
+}
+
+.form-control:focus,
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--rosa-principal);
+    box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+}
+
+.form-control::placeholder {
+    color: var(--cinza-secundario);
+    opacity: 0.7;
+}
+
+/* Select Customizado */
+select.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23E91E63' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+}
+
+/* Checkbox e Radio */
+input[type="checkbox"],
+input[type="radio"] {
+    width: 1.25rem;
+    height: 1.25rem;
+    accent-color: var(--rosa-principal);
+    cursor: pointer;
+}
+
+/* ==================== 8. BADGES E PILLS ==================== */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-primary {
+    background: var(--rosa-claro-fundo);
+    color: var(--rosa-principal);
+    border: 1px solid var(--rosa-suave);
+}
+
+.badge-success {
+    background: rgba(76, 175, 80, 0.1);
+    color: var(--success);
+    border: 1px solid var(--success);
+}
+
+.badge-warning {
+    background: rgba(255, 152, 0, 0.1);
+    color: var(--warning);
+    border: 1px solid var(--warning);
+}
+
+.badge-danger {
+    background: rgba(244, 67, 54, 0.1);
+    color: var(--danger);
+    border: 1px solid var(--danger);
+}
+
+.badge-secondary {
+    background: var(--cinza-fundo);
+    color: var(--cinza-secundario);
+    border: 1px solid var(--cinza-claro);
+}
+
+.badge-info {
+    background: rgba(33, 150, 243, 0.1);
+    color: var(--info);
+    border: 1px solid var(--info);
+}
+
+.badge-light {
+    background: var(--branco);
+    color: var(--cinza-texto);
+    border: 1px solid var(--cinza-claro);
+}
+
+/* ==================== 9. TABELAS MODERNAS ==================== */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--branco);
+}
+
+.table thead {
+    background: linear-gradient(135deg, var(--rosa-principal) 0%, var(--rosa-suave) 100%);
+    color: var(--branco);
+}
+
+.table thead th {
+    padding: 1rem;
+    font-weight: 700;
+    text-align: left;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: none;
+}
+
+.table tbody tr {
+    border-bottom: 1px solid var(--cinza-claro);
+    transition: var(--transition-fast);
+}
+
+.table tbody tr:hover {
+    background: var(--rosa-claro-fundo);
+}
+
+.table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.table td {
+    padding: 1rem;
+    vertical-align: middle;
+    color: var(--cinza-texto);
+}
+
+/* Tabela Striped */
+.table-striped tbody tr:nth-child(even) {
+    background: #FAFAFA;
+}
+
+/* Tabela Bordered */
+.table-bordered {
+    border: 1px solid var(--cinza-claro);
+}
+
+.table-bordered td,
+.table-bordered th {
+    border: 1px solid var(--cinza-claro);
+}
+
+/* Tabela Hover */
+.table-hover tbody tr:hover {
+    background: var(--rosa-claro-fundo);
+    cursor: pointer;
+}
+
+/* ==================== 10. ALERTS E MENSAGENS ==================== */
+.alert {
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 1.5rem;
+    border-left: 4px solid;
+    display: flex;
+    align-items: start;
+    gap: 0.75rem;
+}
+
+.alert i {
+    font-size: 1.25rem;
+    margin-top: 0.125rem;
+}
+
+.alert-success {
+    background: rgba(76, 175, 80, 0.1);
+    color: var(--success);
+    border-color: var(--success);
+}
+
+.alert-warning {
+    background: rgba(255, 152, 0, 0.1);
+    color: var(--warning);
+    border-color: var(--warning);
+}
+
+.alert-danger {
+    background: rgba(244, 67, 54, 0.1);
+    color: var(--danger);
+    border-color: var(--danger);
+}
+
+.alert-info {
+    background: rgba(33, 150, 243, 0.1);
+    color: var(--info);
+    border-color: var(--info);
+}
+
+.alert-dismissible .close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.6;
+    margin-left: auto;
+}
+
+.alert-dismissible .close:hover {
+    opacity: 1;
+}
+
+/* ==================== 11. UTILIDADES ==================== */
+/* Espaçamentos */
+.mt-1 { margin-top: 0.25rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-3 { margin-top: 1rem; }
+.mt-4 { margin-top: 1.5rem; }
+.mt-5 { margin-top: 3rem; }
+
+.mb-1 { margin-bottom: 0.25rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 1rem; }
+.mb-4 { margin-bottom: 1.5rem; }
+.mb-5 { margin-bottom: 3rem; }
+
+.pt-1 { padding-top: 0.25rem; }
+.pt-2 { padding-top: 0.5rem; }
+.pt-3 { padding-top: 1rem; }
+.pt-4 { padding-top: 1.5rem; }
+.pt-5 { padding-top: 3rem; }
+
+.pb-1 { padding-bottom: 0.25rem; }
+.pb-2 { padding-bottom: 0.5rem; }
+.pb-3 { padding-bottom: 1rem; }
+.pb-4 { padding-bottom: 1.5rem; }
+.pb-5 { padding-bottom: 3rem; }
+
+/* Cores de Texto */
+.text-success { color: var(--success) !important; }
+.text-warning { color: var(--warning) !important; }
+.text-danger { color: var(--danger) !important; }
+.text-info { color: var(--info) !important; }
+.text-rosa { color: var(--rosa-principal) !important; }
+
+/* Peso da Fonte */
+.fw-bold { font-weight: 700; }
+.fw-normal { font-weight: 400; }
+.fw-light { font-weight: 300; }
+
+/* Alinhamento de Texto */
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+
+/* Display */
+.d-none { display: none; }
+.d-block { display: block; }
+.d-inline { display: inline; }
+.d-inline-block { display: inline-block; }
+.d-flex { display: flex; }
+
+/* Flex */
+.flex-column { flex-direction: column; }
+.flex-row { flex-direction: row; }
+.justify-content-center { justify-content: center; }
+.justify-content-between { justify-content: space-between; }
+.align-items-center { align-items: center; }
+.gap-1 { gap: 0.25rem; }
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 1rem; }
+
+/* Sombras */
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+
+/* Bordas Arredondadas */
+.rounded { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-pill { border-radius: var(--radius-pill); }
+
+/* ==================== 12. CONTAINER E GRID ==================== */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.container-fluid {
+    width: 100%;
+    padding: 0 1rem;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -0.75rem;
+}
+
+[class*="col-"] {
+    padding: 0 0.75rem;
+    width: 100%;
+}
+
+/* Grid System */
+.col-1 { width: 8.333%; }
+.col-2 { width: 16.666%; }
+.col-3 { width: 25%; }
+.col-4 { width: 33.333%; }
+.col-5 { width: 41.666%; }
+.col-6 { width: 50%; }
+.col-7 { width: 58.333%; }
+.col-8 { width: 66.666%; }
+.col-9 { width: 75%; }
+.col-10 { width: 83.333%; }
+.col-11 { width: 91.666%; }
+.col-12 { width: 100%; }
+
+/* ==================== 13. COMPONENTES ESPECÍFICOS ==================== */
+
+/* Botão de Registro de Ponto - DESTAQUE */
+.btn-registrar {
+    padding: 1.25rem 3rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    box-shadow: 0 8px 24px rgba(233, 30, 99, 0.3);
+    animation: pulse-rosa 2s infinite;
+}
+
+@keyframes pulse-rosa {
+    0%, 100% {
+        box-shadow: 0 8px 24px rgba(233, 30, 99, 0.3);
+    }
+    50% {
+        box-shadow: 0 12px 32px rgba(233, 30, 99, 0.5);
+    }
+}
+
+/* Card de Saldo */
+.card-saldo {
+    background: linear-gradient(135deg, var(--rosa-principal) 0%, var(--rosa-suave) 100%);
+    color: var(--branco);
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-rosa);
+}
+
+.card-saldo h3 {
+    color: var(--branco);
+    font-size: 2.5rem;
+    margin: 0;
+}
+
+/* Status Online/Offline */
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+.status-online .status-dot {
+    background: var(--success);
+}
+
+.status-offline .status-dot {
+    background: var(--cinza-secundario);
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Documento Oficial (PDFs) */
+.documento-oficial {
+    background: var(--branco);
+    padding: 2rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
 }
 
 .header-principal {
-    background: linear-gradient(135deg, #d63384 0%, #b02a6a 100%);
-    padding: 30px;
-    color: white;
+    background: linear-gradient(135deg, var(--rosa-principal) 0%, var(--rosa-suave) 100%);
+    color: var(--branco);
+    padding: 2rem;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    margin: -2rem -2rem 2rem -2rem;
 }
 
 .titulo-documento {
-    font-weight: 800;
     font-size: 2rem;
-    letter-spacing: 2px;
+    color: var(--branco);
+    margin: 0;
 }
 
 .subtitulo-documento {
     font-size: 1rem;
-    opacity: 0.95;
-    margin-top: 5px;
+    opacity: 0.9;
 }
 
 .badge-oficial {
     background: rgba(255, 255, 255, 0.2);
-    padding: 10px 20px;
-    border-radius: 50px;
-    font-weight: 600;
-    border: 2px solid white;
-    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.875rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.badge-oficial i {
-    margin-right: 8px;
-}
-
-/* ==================== SEÇÕES DE DADOS ==================== */
 .secao-dados-empresa,
 .secao-dados-funcionario {
-    padding: 25px 30px;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.secao-dados-funcionario {
-    background-color: #fef9fa;
+    background: var(--cinza-fundo);
+    padding: 1.5rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 1.5rem;
 }
 
 .titulo-secao-doc {
+    color: var(--rosa-principal);
     font-weight: 700;
-    color: #d63384;
-    font-size: 0.9rem;
-    letter-spacing: 1px;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-}
-
-.titulo-secao-doc i {
-    margin-right: 8px;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--rosa-claro-fundo);
 }
 
 .campo-info {
-    background: #f8f9fa;
-    padding: 12px 15px;
-    border-radius: 8px;
-    border-left: 3px solid #d63384;
-    transition: all 0.3s;
-}
-
-.campo-info:hover {
-    background: #fff;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.campo-info.destaque {
-    background: #fff;
-    border-left: 4px solid #d63384;
-    box-shadow: 0 2px 8px rgba(214, 51, 132, 0.1);
+    margin-bottom: 1rem;
 }
 
 .campo-info label {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
+    color: var(--cinza-secundario);
     text-transform: uppercase;
-    color: #6c757d;
-    font-weight: 600;
-    margin-bottom: 5px;
-    display: block;
     letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
 }
 
 .valor-info {
     font-weight: 600;
-    color: #2c3e50;
-    font-size: 0.95rem;
-}
-
-/* ==================== CARD DE REGISTROS ==================== */
-.card-registros {
-    border: none;
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-.card-header-custom {
-    background: linear-gradient(135deg, #495057 0%, #343a40 100%);
-    color: white;
-    padding: 20px 25px;
-    font-weight: 700;
-    font-size: 1.1rem;
-    letter-spacing: 1px;
-}
-
-.card-header-custom i {
-    margin-right: 10px;
-}
-
-.instrucao-revisao {
-    background: #fff3cd;
-    border-left: 4px solid #ffc107;
-    padding: 15px 20px;
-    margin: 20px;
-    border-radius: 8px;
-    color: #856404;
-}
-
-.instrucao-revisao i {
-    margin-right: 10px;
-    color: #ffc107;
-}
-
-.table-registros {
-    margin: 0;
-}
-
-.table-registros thead {
-    background: #f8f9fa;
-}
-
-.table-registros th {
-    color: #495057;
-    font-weight: 700;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 15px;
-    border: none;
-}
-
-.table-registros th i {
-    margin-right: 5px;
-    color: #d63384;
-}
-
-.table-registros tbody tr {
-    transition: all 0.2s;
-}
-
-.table-registros tbody tr:hover {
-    background: #fef9fa;
-    transform: scale(1.01);
-    box-shadow: 0 2px 8px rgba(214, 51, 132, 0.1);
-}
-
-.table-registros td {
-    padding: 15px;
-    vertical-align: middle;
-    font-weight: 500;
-    color: #495057;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.table-registros .data-col {
-    font-weight: 700;
-    color: #d63384;
-}
-
-/* ==================== CARD DE ASSINATURA ==================== */
-.card-assinatura {
-    border: 2px solid #d63384;
-    border-radius: 15px;
-    overflow: hidden;
-}
-
-.card-header-assinatura {
-    background: linear-gradient(135deg, #d63384 0%, #b02a6a 100%);
-    color: white;
-    padding: 25px;
-    font-weight: 700;
-    font-size: 1.3rem;
-    letter-spacing: 1.5px;
-    text-align: center;
-}
-
-.card-header-assinatura i {
-    margin-right: 12px;
-    font-size: 1.5rem;
-}
-
-/* ==================== SELETOR DE ASSINATURA ==================== */
-.seletor-assinatura {
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 12px;
-}
-
-.texto-instrucao {
-    text-align: center;
-    color: #495057;
-    font-weight: 600;
-    font-size: 1.1rem;
-    margin-bottom: 25px;
-}
-
-.texto-instrucao i {
-    color: #d63384;
-    margin-right: 10px;
-}
-
-.texto-instrucao-simples {
-    text-align: center;
-    color: #495057;
-    font-weight: 500;
+    color: var(--cinza-texto);
     font-size: 1rem;
-    margin-bottom: 30px;
-    padding: 15px;
-    background: #e3f2fd;
-    border-radius: 8px;
-    border-left: 4px solid #2196f3;
 }
 
-.texto-instrucao-simples i {
-    color: #2196f3;
-    margin-right: 10px;
+/* ==================== 14. ANIMAÇÕES ==================== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.opcao-assinatura {
-    flex: 1;
-    max-width: 250px;
-    background: white;
-    border: 3px solid #e0e0e0;
-    border-radius: 15px;
-    padding: 25px 20px;
-    cursor: pointer;
-    transition: all 0.3s;
-    text-align: center;
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
 }
 
-.opcao-assinatura:hover {
-    border-color: #d63384;
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(214, 51, 132, 0.2);
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
 }
 
-.opcao-assinatura.active {
-    border-color: #d63384;
-    background: linear-gradient(135deg, #fef9fa 0%, #fff 100%);
-    box-shadow: 0 8px 25px rgba(214, 51, 132, 0.3);
+.slide-in {
+    animation: slideIn 0.3s ease-out;
 }
 
-.opcao-assinatura input[type="radio"] {
-    display: none;
-}
-
-.icone-opcao {
-    font-size: 3rem;
-    color: #d63384;
-    margin-bottom: 15px;
-}
-
-.titulo-opcao {
-    font-weight: 700;
-    color: #2c3e50;
-    font-size: 1.1rem;
-    margin-bottom: 8px;
-}
-
-.desc-opcao {
-    color: #6c757d;
-    font-size: 0.9rem;
-}
-
-/* ==================== ÁREA DE ASSINATURA MANUAL ==================== */
-.area-assinatura-wrapper {
-    padding: 30px 20px;
-}
-
-.area-assinatura-wrapper.d-none {
-    display: none !important;
-}
-
-.canvas-container {
-    position: relative;
-    width: 100%;
-    max-width: 700px;
-    margin: 0 auto;
-    background: white;
-    border: 2px solid #d63384;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(214, 51, 132, 0.15);
-}
-
-#signature-pad {
-    width: 100%;
-    height: 250px;
-    cursor: crosshair;
-    display: block;
-}
-
-.canvas-placeholder {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    pointer-events: none;
-    opacity: 1;
-    transition: opacity 0.3s;
-    color: #adb5bd;
-}
-
-.canvas-placeholder i {
-    font-size: 3rem;
-    margin-bottom: 10px;
-    display: block;
-}
-
-.canvas-placeholder p {
-    font-size: 1rem;
-    font-weight: 600;
-}
-
-.controles-canvas {
-    text-align: center;
-    margin-top: 20px;
-}
-
-.btn-limpar {
-    background: #6c757d;
-    color: white;
-    border: none;
-    padding: 12px 30px;
-    border-radius: 50px;
-    font-weight: 600;
-    transition: all 0.3s;
-}
-
-.btn-limpar:hover {
-    background: #5a6268;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
-}
-
-.texto-ajuda {
-    display: block;
-    margin-top: 15px;
-    color: #6c757d;
-    font-style: italic;
-}
-
-.texto-ajuda i {
-    color: #ffc107;
-    margin-right: 5px;
-}
-
-/* ==================== ÁREA DE ASSINATURA AUTOMÁTICA ==================== */
-.preview-assinatura-auto {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 50px 30px;
-    background: white;
-    border: 2px dashed #d63384;
-    border-radius: 12px;
-}
-
-.assinatura-automatica {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-#texto-assinatura {
-    font-family: 'Dancing Script', cursive;
-    font-size: 4rem;
-    color: #1a1a1a;
-    font-weight: 700;
+/* ==================== 15. LOADING STATES ==================== */
+.loading {
     display: inline-block;
-}
-
-.linha-assinatura {
-    width: 100%;
-    height: 2px;
-    background: #2c3e50;
-    margin-top: 10px;
-}
-
-.texto-certificacao {
-    text-align: center;
-    color: #6c757d;
-    font-size: 0.9rem;
-    margin-top: 20px;
-}
-
-.texto-certificacao i {
-    color: #28a745;
-    margin-right: 8px;
-}
-
-/* ==================== ÁREA DE CONFIRMAÇÃO ==================== */
-.area-confirmacao {
-    background: #f8f9fa;
-    padding: 30px;
-    border-radius: 12px;
-    border: 2px solid #e0e0e0;
-}
-
-.checkbox-confirmacao {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    border-left: 4px solid #d63384;
-    margin-bottom: 25px;
-    display: flex;
-    align-items: start;
-    gap: 15px;
-}
-
-.checkbox-confirmacao input[type="checkbox"] {
     width: 20px;
     height: 20px;
-    cursor: pointer;
-    margin-top: 3px;
-    flex-shrink: 0;
+    border: 3px solid rgba(233, 30, 99, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--rosa-principal);
+    animation: spin 1s linear infinite;
 }
 
-.checkbox-confirmacao label {
-    color: #495057;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    cursor: pointer;
-    margin: 0;
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
-.btn-confirmar-final {
-    width: 100%;
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-    color: white;
-    border: none;
-    padding: 18px 30px;
-    border-radius: 50px;
-    font-weight: 700;
-    font-size: 1.1rem;
-    letter-spacing: 1px;
-    transition: all 0.3s;
-    text-transform: uppercase;
+/* ==================== 16. RESPONSIVIDADE - MOBILE FIRST ==================== */
+
+/* Tablets (768px+) */
+@media (min-width: 768px) {
+    .col-md-1 { width: 8.333%; }
+    .col-md-2 { width: 16.666%; }
+    .col-md-3 { width: 25%; }
+    .col-md-4 { width: 33.333%; }
+    .col-md-5 { width: 41.666%; }
+    .col-md-6 { width: 50%; }
+    .col-md-7 { width: 58.333%; }
+    .col-md-8 { width: 66.666%; }
+    .col-md-9 { width: 75%; }
+    .col-md-10 { width: 83.333%; }
+    .col-md-11 { width: 91.666%; }
+    .col-md-12 { width: 100%; }
+    
+    .container {
+        padding: 0 2rem;
+    }
 }
 
-.btn-confirmar-final:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+    .col-lg-1 { width: 8.333%; }
+    .col-lg-2 { width: 16.666%; }
+    .col-lg-3 { width: 25%; }
+    .col-lg-4 { width: 33.333%; }
+    .col-lg-5 { width: 41.666%; }
+    .col-lg-6 { width: 50%; }
+    .col-lg-7 { width: 58.333%; }
+    .col-lg-8 { width: 66.666%; }
+    .col-lg-9 { width: 75%; }
+    .col-lg-10 { width: 83.333%; }
+    .col-lg-11 { width: 91.666%; }
+    .col-lg-12 { width: 100%; }
 }
 
-.btn-confirmar-final:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+/* Mobile (até 767px) */
+@media (max-width: 767px) {
+    .navbar-brand img {
+        height: 35px;
+    }
+    
+    .btn-registrar {
+        padding: 1rem 2rem;
+        font-size: 1rem;
+    }
+    
+    .table {
+        font-size: 0.875rem;
+    }
+    
+    .table thead {
+        display: none;
+    }
+    
+    .table tbody tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid var(--cinza-claro);
+        border-radius: var(--radius-md);
+        padding: 1rem;
+    }
+    
+    .table tbody td {
+        display: block;
+        text-align: right;
+        padding: 0.5rem 0;
+        border: none;
+    }
+    
+    .table tbody td::before {
+        content: attr(data-label);
+        float: left;
+        font-weight: 700;
+        color: var(--rosa-principal);
+    }
 }
 
-.btn-confirmar-final i {
-    margin-right: 12px;
-    font-size: 1.3rem;
-}
-
-/* ==================== ASSINATURA NO PDF ==================== */
-.assinatura-pdf-container {
-    display: none;
-    margin-top: 60px;
-    padding: 30px;
-    text-align: center;
-    border-top: 2px solid #e0e0e0;
-}
-
-.titulo-assinatura-pdf {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: #495057;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 20px;
-}
-
-.imagem-assinatura-pdf {
-    max-height: 100px;
-    max-width: 300px;
-    margin-bottom: 10px;
-}
-
-.assinatura-automatica-pdf {
-    font-family: 'Dancing Script', cursive;
-    font-size: 3rem;
-    color: #1a1a1a;
-    margin-bottom: 10px;
-}
-
-.linha-assinatura-pdf {
-    width: 400px;
-    height: 2px;
-    background: #2c3e50;
-    margin: 20px auto;
-}
-
-.info-assinatura-pdf {
-    font-size: 0.85rem;
-    color: #6c757d;
-    line-height: 1.6;
-}
-
-/* ==================== REGRAS DE IMPRESSÃO / PDF ==================== */
+/* ==================== 17. MODO IMPRESSÃO ==================== */
 @media print {
     .no-print,
     .navbar,
     nav,
     .btn,
-    button,
-    .instrucao-revisao {
+    button {
         display: none !important;
     }
     
-    .print-only,
-    .assinatura-pdf-container {
+    .print-only {
         display: block !important;
     }
     
     body {
-        background: white !important;
-    }
-    
-    .header-principal {
-        background: white !important;
-        color: #2c3e50 !important;
-        border-bottom: 3px solid #d63384;
-    }
-    
-    .titulo-documento {
-        color: #d63384 !important;
-    }
-    
-    .card-header-custom {
-        background: white !important;
-        color: #2c3e50 !important;
-        border-bottom: 2px solid #495057;
+        background: var(--branco);
     }
     
     .card,
     .shadow,
-    .shadow-sm,
     .shadow-lg {
         box-shadow: none !important;
-        border: 1px solid #e0e0e0;
-    }
-    
-    .table-registros,
-    .table-registros tbody,
-    .table-registros tr {
-        page-break-inside: avoid;
-    }
-    
-    .container,
-    .container-fluid {
-        max-width: 100%;
-        padding: 0;
+        border: 1px solid var(--cinza-claro);
     }
     
     * {
         transition: none !important;
         animation: none !important;
     }
-    
-    .campo-info label {
-        color: #6c757d !important;
-    }
-    
-    .valor-info {
-        color: #2c3e50 !important;
-    }
 }
 
-/* ==================== RESPONSIVIDADE ==================== */
-@media (max-width: 768px) {
-    .titulo-documento {
-        font-size: 1.5rem;
-    }
+/* ==================== 18. ACESSIBILIDADE ==================== */
+*:focus {
+    outline: 2px solid var(--rosa-principal);
+    outline-offset: 2px;
+}
 
-    .btn-group-toggle {
-        flex-direction: column;
-    }
+button:focus,
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+    outline: 2px solid var(--rosa-principal);
+    outline-offset: 2px;
+}
 
-    .opcao-assinatura {
-        max-width: 100%;
-        margin-bottom: 15px;
-    }
+/* Skip Link para Navegação por Teclado */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--rosa-principal);
+    color: var(--branco);
+    padding: 8px;
+    text-decoration: none;
+    z-index: 100;
+}
 
-    #texto-assinatura {
-        font-size: 2.5rem;
-    }
+.skip-link:focus {
+    top: 0;
+}
 
-    .table-registros {
-        font-size: 0.85rem;
-    }
-    
-    .header-principal {
-        padding: 20px;
-    }
-    
-    .secao-dados-empresa,
-    .secao-dados-funcionario {
-        padding: 20px 15px;
+/* Alto Contraste para Melhor Leitura */
+@media (prefers-contrast: high) {
+    :root {
+        --rosa-principal: #C2185B;
+        --cinza-texto: #000000;
     }
 }
 
-/* ==================== PÁGINA DE VISUALIZAÇÃO DE FOLHA ASSINADA (ADMIN) ==================== */
-
-/* Área de Assinatura Visualização */
-.assinatura-visualizacao {
-    max-width: 700px;
-    margin: 0 auto;
-}
-
-.preview-assinatura-final {
-    text-align: center;
-    padding: 40px 20px;
-    background: #f8f9fa;
-    border-radius: 12px;
-    margin-bottom: 30px;
-}
-
-.imagem-assinatura-visualizacao {
-    max-height: 120px;
-    max-width: 400px;
-    margin-bottom: 15px;
-}
-
-.assinatura-automatica-visualizacao {
-    font-family: 'Dancing Script', cursive;
-    font-size: 4rem;
-    color: #1a1a1a;
-    font-weight: 700;
-    margin-bottom: 15px;
-}
-
-.linha-assinatura-visualizacao {
-    width: 400px;
-    height: 2px;
-    background: #2c3e50;
-    margin: 0 auto;
-}
-
-.info-assinatura-final {
-    background: white;
-    padding: 25px;
-    border-radius: 8px;
-    border-left: 4px solid #28a745;
-    margin-bottom: 25px;
-}
-
-.info-item {
-    padding: 10px 0;
-    color: #495057;
-    font-size: 0.95rem;
-}
-
-.info-item i {
-    color: #28a745;
-    margin-right: 10px;
-    width: 20px;
-}
-
-.selo-autenticidade {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    padding: 20px;
-    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-    border-radius: 8px;
-    border: 2px dashed #28a745;
-}
-
-.selo-icone {
-    font-size: 3rem;
-    color: #28a745;
-}
-
-.selo-texto {
-    text-align: left;
-    color: #2e7d32;
-}
-
-.selo-texto strong {
-    font-size: 1.1rem;
-    display: block;
-    margin-bottom: 5px;
-}
-
-/* Impressão - Específico da página de visualização */
-@media print {
-    .selo-autenticidade {
-        page-break-before: avoid;
+/* Redução de Movimento para Acessibilidade */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
 }

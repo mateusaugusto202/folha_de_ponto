@@ -1,90 +1,214 @@
-<!doctype html>
-<html lang="pt-br">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-    <!-- Meta tags obrigatórias -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Estilos CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Sistema de Ponto Eletrônico - Empresária Online">
     
-    <!-- Título dinâmico da página -->
-    <title>{% block title %}Sistema de Ponto{% endblock %}</title>
+    <title>{% block title %}Sistema de Ponto - Empresária Online{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/favicon.png') }}">
+    
+    <!-- Google Fonts - Inter para UI moderna -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
-
-    <!-- ==================== BARRA DE NAVEGAÇÃO ==================== -->
-    <nav class="navbar navbar-expand-lg custom-navbar mb-4">
+    <!-- Skip Link para Acessibilidade -->
+    <a href="#main-content" class="skip-link">Pular para o conteúdo</a>
+    
+    <!-- ==================== NAVBAR ==================== -->
+    {% if current_user.is_authenticated %}
+    <nav class="navbar">
         <div class="container-fluid">
-            <!-- Logo e nome do sistema -->
-            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('login') }}">
-                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" height="40" class="mr-2">
-                <span>{% block logo_text %}Folha de Ponto{% endblock %}</span>
-            </a>
-
-            <!-- Botão de menu responsivo (mobile) -->
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <!-- Itens do menu -->
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <div class="navbar-nav ml-auto align-items-center">
+            <div class="d-flex justify-content-between align-items-center" style="width: 100%;">
+                <!-- Logo e Nome -->
+                <a class="navbar-brand" href="{{ url_for('index') }}">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Empresária Online">
+                    <span>{% block logo_text %}Ponto Online{% endblock %}</span>
+                </a>
+                
+                <!-- Menu Desktop -->
+                <div class="d-none d-md-flex align-items-center gap-3">
+                    <!-- Relógio Digital -->
+                    <div id="relogio-digital" {% block hide_clock %}{% endblock %}>
+                        00:00:00
+                    </div>
                     
-                    <!-- Opções disponíveis apenas para usuários logados -->
-                    {% if current_user.is_authenticated %}
-                        <!-- Admin tem acesso rápido ao seu ponto pessoal -->
-                        {% if current_user.tipo_usuario == 'admin' %}
-                            <a href="{{ url_for('area_funcionario') }}" class="btn btn-primary btn-sm mr-3">
-                                <i class="fas fa-clock"></i> Meu Ponto Pessoal
-                            </a>
-                        {% endif %}
-
-                        <!-- Saudação com nome do usuário -->
-                        <span class="nav-item nav-link mr-3" style="color: var(--rosa-escuro) !important; font-weight: bold;">
-                            Olá, {{ current_user.nome }}
-                        </span>
-
-                        <!-- Botão de logout -->
-                        <a class="btn-logout" href="{{ url_for('logout') }}">Sair</a>
+                    <!-- Admin: Link para área pessoal -->
+                    {% if current_user.tipo_usuario == 'admin' %}
+                        <a href="{{ url_for('area_funcionario') }}" class="btn btn-sm btn-outline-rosa">
+                            <i class="fas fa-clock"></i> Meu Ponto
+                        </a>
                     {% endif %}
+                    
+                    <!-- Informações do Usuário -->
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-muted">Olá,</span>
+                        <span class="fw-bold text-rosa">{{ current_user.nome }}</span>
+                        {% if current_user.tipo_usuario == 'admin' %}
+                            <span class="badge badge-danger">ADMIN</span>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Botão Sair -->
+                    <a href="{{ url_for('logout') }}" class="btn-logout">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </a>
+                </div>
+                
+                <!-- Menu Mobile (Hamburguer) -->
+                <button class="d-md-none btn btn-sm btn-rosa" type="button" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <!-- Menu Mobile Expandido -->
+            <div id="mobile-menu" class="d-none" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--cinza-claro);">
+                <div class="d-flex flex-column gap-2">
+                    <div id="relogio-digital-mobile" class="text-center">
+                        00:00:00
+                    </div>
+                    
+                    {% if current_user.tipo_usuario == 'admin' %}
+                        <a href="{{ url_for('area_funcionario') }}" class="btn btn-outline-rosa btn-block">
+                            <i class="fas fa-clock"></i> Meu Ponto
+                        </a>
+                    {% endif %}
+                    
+                    <div class="text-center">
+                        <small class="text-muted">Logado como:</small><br>
+                        <strong class="text-rosa">{{ current_user.nome }}</strong>
+                        {% if current_user.tipo_usuario == 'admin' %}
+                            <span class="badge badge-danger">ADMIN</span>
+                        {% endif %}
+                    </div>
+                    
+                    <a href="{{ url_for('logout') }}" class="btn btn-danger btn-block">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </a>
                 </div>
             </div>
         </div>
     </nav>
-
-    <!-- ==================== RELÓGIO DIGITAL ==================== -->
-    <!-- Exibe a hora atual do sistema em tempo real -->
-    <li class="nav-item d-flex align-items-center mr-3">
-        <div id="relogio-digital" class="badge badge-light p-2 {% block hide_clock %}{% endblock %}" 
-            style="font-size: 1rem; color: #d63384; border: 1px solid #f8bbd0;">
-            00:00:00
-        </div>
-    </li>
-
-    <!-- Script para atualizar o relógio a cada segundo -->
-    <script>
-        function atualizarRelogio() {
-            const agora = new Date();
-            // Formata a hora no padrão brasileiro (HH:MM:SS)
-            const tempo = agora.toLocaleTimeString('pt-BR');
-            document.getElementById('relogio-digital').innerText = tempo;
-        }
-        // Atualiza a cada 1000ms (1 segundo)
-        setInterval(atualizarRelogio, 1000);
-    </script>
-
+    {% endif %}
+    
+    <!-- ==================== MENSAGENS FLASH ==================== -->
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade-in" role="alert">
+                        {% if category == 'success' %}
+                            <i class="fas fa-check-circle"></i>
+                        {% elif category == 'danger' %}
+                            <i class="fas fa-exclamation-circle"></i>
+                        {% elif category == 'warning' %}
+                            <i class="fas fa-exclamation-triangle"></i>
+                        {% else %}
+                            <i class="fas fa-info-circle"></i>
+                        {% endif %}
+                        <span>{{ message }}</span>
+                        <button type="button" class="close" onclick="this.parentElement.remove()">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+    
     <!-- ==================== CONTEÚDO PRINCIPAL ==================== -->
-    <!-- Cada página injeta seu conteúdo aqui através do block content -->
-    <main role="main" class="container">
+    <main id="main-content" class="container mt-4 mb-5">
         {% block content %}{% endblock %}
     </main>
-
-    <!-- ==================== SCRIPTS JAVASCRIPT ==================== -->
-    <!-- jQuery (necessário para Bootstrap) -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <!-- Bootstrap JS com Popper.js incluído -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="mt-5 py-4" style="background: var(--cinza-fundo); border-top: 2px solid var(--rosa-principal);">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-left mb-3 mb-md-0">
+                    <p class="mb-0 text-muted">
+                        &copy; 2026 <strong class="text-rosa">Empresária Online</strong> - Todos os direitos reservados
+                    </p>
+                </div>
+                <div class="col-md-6 text-center text-md-right">
+                    <small class="text-muted">
+                        <i class="fas fa-shield-alt text-rosa"></i> Sistema seguro e criptografado
+                    </small>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- ==================== SCRIPTS ==================== -->
+    <script>
+        // Relógio Digital
+        function atualizarRelogio() {
+            const agora = new Date();
+            const tempo = agora.toLocaleTimeString('pt-BR');
+            
+            const relogio = document.getElementById('relogio-digital');
+            const relogioMobile = document.getElementById('relogio-digital-mobile');
+            
+            if (relogio) relogio.textContent = tempo;
+            if (relogioMobile) relogioMobile.textContent = tempo;
+        }
+        
+        // Atualiza a cada 1 segundo
+        setInterval(atualizarRelogio, 1000);
+        atualizarRelogio(); // Chama imediatamente
+        
+        // Toggle Menu Mobile
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            if (menu) {
+                menu.classList.toggle('d-none');
+            }
+        }
+        
+        // Auto-fechar alerts após 5 segundos
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert:not(.alert-warning)');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 300);
+                }, 5000);
+            });
+        });
+        
+        // Confirmação antes de sair (se houver formulário modificado)
+        let formModified = false;
+        const forms = document.querySelectorAll('form');
+        forms.forEach(form => {
+            form.addEventListener('change', () => {
+                formModified = true;
+            });
+            form.addEventListener('submit', () => {
+                formModified = false;
+            });
+        });
+        
+        window.addEventListener('beforeunload', (e) => {
+            if (formModified) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

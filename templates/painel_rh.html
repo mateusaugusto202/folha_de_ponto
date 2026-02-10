@@ -1,211 +1,367 @@
 {% extends "base.html" %}
-{% block content %}
+{% block title %}Painel RH - Administração{% endblock %}
 
+{% block content %}
+<!-- ==================== HEADER DO PAINEL ==================== -->
+<div class="mb-5">
+    <div class="card shadow-lg border-left-rosa">
+        <div class="card-body" style="padding: 2rem;">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h2 class="mb-2">
+                        <i class="fas fa-users-cog"></i> Painel Administrativo
+                    </h2>
+                    <p class="mb-0 text-muted">
+                        Bem-vindo(a), <strong class="text-rosa">{{ current_user.nome }}</strong> 
+                        <span class="badge badge-danger ml-2">ADMINISTRADOR</span>
+                    </p>
+                </div>
+                <div class="col-md-4 text-md-right mt-3 mt-md-0">
+                    <a href="{{ url_for('area_funcionario') }}" class="btn btn-outline-rosa">
+                        <i class="fas fa-clock"></i> Meu Ponto Pessoal
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== ALERTAS DE ATRASO ==================== -->
 {% if alertas_atraso %}
-    <div class="alert alert-danger shadow-sm border-left-danger" role="alert">
-        <h5 class="alert-heading">
-            <i class="fas fa-exclamation-triangle"></i> Atenção, Administrador!
-        </h5>
-        <ul class="mb-0">
-            {% for alerta in alertas_atraso %}
+<div class="alert alert-danger shadow-sm mb-4" role="alert">
+    <div class="d-flex align-items-start gap-3">
+        <i class="fas fa-exclamation-triangle fa-2x"></i>
+        <div class="flex-grow-1">
+            <h5 class="alert-heading mb-3">
+                <strong>Atenção!</strong> Funcionários sem registro hoje
+            </h5>
+            <ul class="mb-0">
+                {% for alerta in alertas_atraso %}
                 <li class="mb-3">
-                    O funcionário <strong>{{ alerta['nome'] }}</strong> ainda não iniciou o serviço hoje.
-                    <div class="mt-2">
-                        <a href="{{ url_for('editar_ponto', user_id=alerta['id']) }}" class="btn btn-warning btn-sm">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <span>
+                            <strong>{{ alerta['nome'] }}</strong> ainda não iniciou o expediente
+                        </span>
+                        <a href="{{ url_for('editar_ponto', user_id=alerta['id']) }}" class="btn btn-sm btn-warning">
                             <i class="fas fa-edit"></i> Editar Ponto
                         </a>
                     </div>
                 </li>
-            {% endfor %}
-        </ul>
-    </div>
-{% endif %}
-
-<div class="container mt-4">
-    <div class="card shadow-sm mb-4">
-        <div class="card-body bg-white border-left-rosa"> 
-            <h5 class="saudacao-admin mb-0">
-                Bem-vindo, <span class="nome-admin">Administrador {{ current_user.nome }}!</span>
-            </h5>
+                {% endfor %}
+            </ul>
         </div>
     </div>
+</div>
+{% endif %}
 
-    <div class="mt-5">
-        <h3 class="titulo-secao"><i class="fas fa-user-clock me-2"></i> Solicitações de Cadastro</h3>
+<!-- ==================== SOLICITAÇÕES DE CADASTRO ==================== -->
+<div class="card shadow mb-5">
+    <div class="card-header">
+        <i class="fas fa-user-clock"></i> Solicitações de Cadastro Pendentes
     </div>
-    <hr>
-    <div class="table-responsive mb-5">
-        <table class="table table-hover table-striped shadow-sm border">
-            <thead class="table-warning">
-                <tr>
-                    <th>Nome</th><th>E-mail</th><th>CPF</th><th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for solicitacao in solicitacoes %}
-                <tr>
-                    <td>{{ solicitacao.nome }}</td>
-                    <td>{{ solicitacao.email }}</td>
-                    <td>{{ solicitacao.cpf }}</td>
-                    <td>
-                        <form action="{{ url_for('aprovar_solicitacao', solicitacao_id=solicitacao.id) }}" method="POST" class="d-inline">
-                            <select name="tipo_contrato" class="form-select form-select-sm d-inline w-auto" required>
-                                <option value="" disabled selected>Contrato...</option>
-                                <option value="CLT">CLT (8h)</option>
-                                <option value="Estagiário">Estagiário (4h)</option>
-                            </select>
-                            <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-check"></i>Aprovar</button>
-                        </form>
-                        <a href="{{ url_for('negar_solicitacao', solicitacao_id=solicitacao.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Negar?')"><i class="fas fa-times"></i>Negar</a>
-                    </td>
-                </tr>
-                {% else %}
-                <tr><td colspan="4" class="text-center text-muted">Nenhuma solicitação pendente.</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    <h2 class="titulo-principal mt-4">Funcionários Ativos</h2>
-    <div class="table-responsive">
-        <table class="table table-hover table-bordered shadow-sm align-middle">
-    <thead class="table-light">
-        <tr class="text-center">
-            <th>NOME</th>
-            <th>STATUS</th>
-            <th>CARGO/CARGA</th>
-            <th>SALDO TOTAL</th>
-            <th style="min-width: 280px;">SOLICITAR ASSINATURA</th>
-            <th style="min-width: 120px;">AÇÕES</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for usuario in usuarios %}
-        <tr>
-            <td class="fw-bold">{{ usuario.nome }}</td>
-            <td class="text-center">
-                <span class="badge rounded-pill bg-secondary px-3">OFFLINE</span>
-            </td>
-            <td class="text-center">
-                <span class="badge rounded-pill border border-danger text-danger px-2">{{ usuario.tipo_usuario.upper() }}</span><br>
-                <small class="text-muted">8.00h (Fixo)</small>
-            </td>
-            <td class="text-center fw-bold text-danger">
-                {{ formatar_horas_decimal(usuario.saldo_total or 0) }}
-            </td>
-            <td>
-                <form action="{{ url_for('solicitar_assinatura') }}" method="POST" class="d-flex gap-1 align-items-center justify-content-center">
-                    <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
-                    <input type="number" name="mes" class="form-control form-control-sm" placeholder="Mês" style="width: 60px;">
-                    <input type="number" name="ano" class="form-control form-control-sm" value="2026" style="width: 80px;">
-                    <button type="submit" class="btn btn-rosa btn-sm text-white px-3" style="background-color: #d63384; border-radius: 20px;">SOLICITAR</button>
-                </form>
-            </td>
-            <td class="text-center">
-    <div class="d-flex gap-2 justify-content-center">
-        <a href="{{ url_for('historico_individual', usuario_id=usuario.id) }}" 
-           class="btn btn-sm btn-outline-rosa" title="Histórico">
-            Historico
-        </a>
-        
-        {% if usuario.tipo_usuario != 'admin' %}
-        <a href="{{ url_for('promover_admin', usuario_id=usuario.id) }}" 
-           class="btn btn-sm btn-warning" title="Promover">
-            Promover
-        </a>
-        {% endif %}
-    </div>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-    </div>
-
-    <div class="mt-5 mb-5">
-        <h3 class="titulo-secao"><i class="fas fa-file-signature me-2"></i> Status das Folhas de Ponto</h3>
+    <div class="card-body">
+        {% if solicitacoes %}
         <div class="table-responsive">
-            <table class="table table-sm table-hover border shadow-sm">
-                <thead class="table-dark">
+            <table class="table table-hover mb-0">
+                <thead>
                     <tr>
-                        <th>Funcionário</th><th>Referência</th><th>Status</th><th>Ações</th>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>CPF</th>
+                        <th style="min-width: 250px;">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
-    {% for folha in folhas_status %}
-    <tr>
-        <td>{{ folha.nome }}</td>
-        <td>{{ folha.mes }}/{{ folha.ano }}</td>
-        <td>
-            <span class="badge {% if folha.status == 'pendente' %}bg-warning text-dark{% elif folha.status.lower() in ['assinada', 'assinado'] %}bg-info{% else %}bg-danger{% endif %}">
-                {{ folha.status.upper() }}
-            </span>
-        </td>
-        
-        <td>
-            {% if folha.status.lower() in ['assinada', 'assinado'] %}
-                <a href="{{ url_for('admin_ver_folha', folha_id=folha.id) }}" 
-                   class="btn btn-info btn-sm text-white" title="Visualizar Folha">
-                   <i class="fas fa-eye"></i> Ver
-                </a>
+                    {% for solicitacao in solicitacoes %}
+                    <tr>
+                        <td>
+                            <strong>{{ solicitacao.nome }}</strong>
+                        </td>
+                        <td>
+                            <small>{{ solicitacao.email }}</small>
+                        </td>
+                        <td>
+                            <code>{{ solicitacao.cpf }}</code>
+                        </td>
+                        <td>
+                            <form action="{{ url_for('aprovar_solicitacao', solicitacao_id=solicitacao.id) }}" 
+                                  method="POST" 
+                                  class="d-flex align-items-center gap-2 flex-wrap"
+                                  onsubmit="return confirm('Aprovar cadastro de {{ solicitacao.nome }}?')">
+                                <select name="tipo_contrato" class="form-control form-control-sm" style="width: auto; min-width: 120px;" required>
+                                    <option value="" disabled selected>Tipo...</option>
+                                    <option value="CLT">CLT (8h)</option>
+                                    <option value="Estagiário">Estagiário (4h)</option>
+                                </select>
+                                <button type="submit" class="btn btn-success btn-sm">
+                                    <i class="fas fa-check"></i> Aprovar
+                                </button>
+                            </form>
+                            <a href="{{ url_for('negar_solicitacao', solicitacao_id=solicitacao.id) }}" 
+                               class="btn btn-danger btn-sm mt-2"
+                               onclick="return confirm('Negar solicitação de {{ solicitacao.nome }}?')">
+                                <i class="fas fa-times"></i> Negar
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center text-muted py-5">
+            <i class="fas fa-inbox fa-3x mb-3" style="opacity: 0.3;"></i>
+            <p class="mb-0">Nenhuma solicitação pendente no momento.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
 
-                <a href="{{ url_for('admin_ver_folha', folha_id=folha.id) }}?print=true" 
-                   target="_blank"
-                   class="btn btn-danger btn-sm" title="Baixar PDF">
-                   <i class="fas fa-file-pdf"></i> PDF
-                </a>
-            {% else %}
-                <span class="text-muted small">Aguardando...</span>
-            {% endif %}
-        </td>
-    </tr>
-    {% endfor %}
-</tbody>
+<!-- ==================== FUNCIONÁRIOS ATIVOS ==================== -->
+<div class="card shadow mb-5">
+    <div class="card-header">
+        <i class="fas fa-users"></i> Funcionários Ativos
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr class="text-center">
+                        <th class="text-left">Nome</th>
+                        <th>Status</th>
+                        <th>Cargo/Carga</th>
+                        <th>Saldo Total</th>
+                        <th style="min-width: 280px;">Solicitar Assinatura</th>
+                        <th style="min-width: 180px;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for usuario in usuarios %}
+                    <tr>
+                        <td>
+                            <strong class="text-rosa">{{ usuario.nome }}</strong>
+                            <br>
+                            <small class="text-muted">{{ usuario.email }}</small>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge badge-secondary">
+                                <i class="fas fa-circle" style="font-size: 0.5rem;"></i> OFFLINE
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge badge-danger">{{ usuario.tipo_usuario.upper() }}</span>
+                            <br>
+                            <small class="text-muted">{{ usuario.carga_horaria or 8 }}h/dia</small>
+                        </td>
+                        <td class="text-center">
+                            <strong class="{% if (usuario.saldo_total or 0) >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                {{ formatar_horas_decimal(usuario.saldo_total or 0) }}
+                            </strong>
+                        </td>
+                        <td>
+                            <form action="{{ url_for('solicitar_assinatura') }}" 
+                                  method="POST" 
+                                  class="d-flex align-items-center gap-2 justify-content-center">
+                                <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
+                                <input 
+                                    type="number" 
+                                    name="mes" 
+                                    class="form-control form-control-sm" 
+                                    placeholder="Mês" 
+                                    min="1" 
+                                    max="12"
+                                    style="width: 70px;"
+                                    required
+                                >
+                                <input 
+                                    type="number" 
+                                    name="ano" 
+                                    class="form-control form-control-sm" 
+                                    value="2026" 
+                                    min="2020" 
+                                    max="2030"
+                                    style="width: 90px;"
+                                    required
+                                >
+                                <button type="submit" class="btn btn-rosa btn-sm">
+                                    SOLICITAR
+                                </button>
+                            </form>
+                        </td>
+                        <td class="text-center">
+                            <div class="d-flex gap-2 justify-content-center flex-wrap">
+                                <a href="{{ url_for('historico_individual', usuario_id=usuario.id) }}" 
+                                   class="btn btn-sm btn-outline-rosa"
+                                   title="Ver histórico completo">
+                                    <i class="fas fa-history"></i> Histórico
+                                </a>
+                                
+                                {% if usuario.tipo_usuario != 'admin' %}
+                                <a href="{{ url_for('promover_admin', usuario_id=usuario.id) }}" 
+                                   class="btn btn-sm btn-warning"
+                                   onclick="return confirm('Promover {{ usuario.nome }} a Administrador?')"
+                                   title="Promover a Admin">
+                                    <i class="fas fa-arrow-up"></i> Promover
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-5">
+                            <i class="fas fa-users-slash fa-3x mb-3" style="opacity: 0.3;"></i>
+                            <p class="mb-0">Nenhum funcionário ativo cadastrado.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
             </table>
         </div>
     </div>
 </div>
 
-<!-- ==================== NOTAS DE FUNCIONALIDADE ==================== -->
-<!--
-FLUXO DO PAINEL RH:
+<!-- ==================== STATUS DAS FOLHAS DE PONTO ==================== -->
+<div class="card shadow mb-5">
+    <div class="card-header">
+        <i class="fas fa-file-signature"></i> Status das Folhas de Ponto
+    </div>
+    <div class="card-body">
+        {% if folhas_status %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Funcionário</th>
+                        <th>Período</th>
+                        <th>Status</th>
+                        <th>Data Assinatura</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for folha in folhas_status %}
+                    <tr>
+                        <td>
+                            <strong>{{ folha.nome }}</strong>
+                        </td>
+                        <td>
+                            <span class="badge badge-light">{{ folha.mes }}/{{ folha.ano }}</span>
+                        </td>
+                        <td>
+                            {% if folha.status == 'pendente' %}
+                                <span class="badge badge-warning">
+                                    <i class="fas fa-clock"></i> PENDENTE
+                                </span>
+                            {% elif folha.status.lower() in ['assinada', 'assinado'] %}
+                                <span class="badge badge-success">
+                                    <i class="fas fa-check-circle"></i> ASSINADA
+                                </span>
+                            {% else %}
+                                <span class="badge badge-danger">
+                                    <i class="fas fa-times-circle"></i> {{ folha.status.upper() }}
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if folha.data_assinatura %}
+                                <small>{{ folha.data_assinatura.strftime('%d/%m/%Y %H:%M') }}</small>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if folha.status.lower() in ['assinada', 'assinado'] %}
+                                <div class="d-flex gap-2">
+                                    <a href="{{ url_for('admin_ver_folha', folha_id=folha.id) }}" 
+                                       class="btn btn-sm btn-info text-white"
+                                       title="Visualizar folha">
+                                        <i class="fas fa-eye"></i> Ver
+                                    </a>
+                                    <a href="{{ url_for('gerar_pdf_folha', folha_id=folha.id) }}" 
+                                       class="btn btn-sm btn-danger"
+                                       target="_blank"
+                                       title="Baixar PDF">
+                                        <i class="fas fa-file-pdf"></i> PDF
+                                    </a>
+                                </div>
+                            {% else %}
+                                <span class="text-muted">Aguardando assinatura...</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center text-muted py-5">
+            <i class="fas fa-file-alt fa-3x mb-3" style="opacity: 0.3;"></i>
+            <p class="mb-0">Nenhuma folha de ponto enviada para assinatura ainda.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
 
-1. ALERTAS DE ATRASO
-   - Sistema compara hora atual com horário limite (08:00)
-   - Se funcionário não bateu ponto e passou do horário, gera alerta
-   - Permite ação rápida do RH
-
-2. SOLICITAÇÕES PENDENTES
-   - Novas solicitações de cadastro aparecem aqui
-   - RH escolhe tipo de contrato:
-     * CLT → 8h/dia
-     * Estagiário → 4h/dia
-   - Ao aprovar: cria usuário na tabela 'usuarios'
-   - Ao negar: marca solicitação como 'reprovado'
-
-3. FUNCIONÁRIOS ATIVOS
-   - Lista todos com status 'ativo'
-   - STATUS ONLINE/OFFLINE:
-     * Online = tem entrada hoje E não tem saída
-     * Offline = não tem entrada OU já saiu
-   - SALDO TOTAL:
-     * Verde = banco de horas positivo
-     * Vermelho = deve horas
-   - AÇÕES:
-     * Promover → muda tipo_usuario para 'admin'
-     * Histórico → exibe todos os pontos com auditoria
-
-MELHORIAS FUTURAS:
-- Filtrar por data
-- Exportar relatórios
-- Gráficos de produtividade
-- Alertas por email/SMS
-- Edição de horários pelo admin
--->
+<!-- ==================== ESTATÍSTICAS RÁPIDAS ==================== -->
+<div class="row mb-5">
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-center border-left-rosa">
+            <div class="card-body">
+                <i class="fas fa-users fa-2x text-rosa mb-3"></i>
+                <h3 class="mb-0">{{ usuarios|length }}</h3>
+                <small class="text-muted">Funcionários Ativos</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-user-clock fa-2x text-warning mb-3"></i>
+                <h3 class="mb-0">{{ solicitacoes|length }}</h3>
+                <small class="text-muted">Solicitações Pendentes</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-file-signature fa-2x text-success mb-3"></i>
+                <h3 class="mb-0">{{ folhas_status|selectattr('status', 'in', ['assinada', 'assinado'])|list|length }}</h3>
+                <small class="text-muted">Folhas Assinadas</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-exclamation-triangle fa-2x text-danger mb-3"></i>
+                <h3 class="mb-0">{{ alertas_atraso|length if alertas_atraso else 0 }}</h3>
+                <small class="text-muted">Alertas de Atraso</small>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
+{% block extra_js %}
 <script>
-    // Atualiza o painel automaticamente a cada 30 segundos
-    setTimeout(function(){
-       window.location.reload();
-    }, 30000); 
+    // Auto-refresh a cada 2 minutos para atualizar status
+    setTimeout(function() {
+        window.location.reload();
+    }, 120000); // 2 minutos
+    
+    // Confirmações de ações
+    document.querySelectorAll('form').forEach(form => {
+        if (form.action.includes('aprovar') || form.action.includes('solicitar')) {
+            form.addEventListener('submit', function(e) {
+                const btn = this.querySelector('button[type="submit"]');
+                if (btn) {
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                    btn.disabled = true;
+                }
+            });
+        }
+    });
 </script>
+{% endblock %}
