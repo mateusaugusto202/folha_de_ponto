@@ -787,9 +787,17 @@ def registrar_ponto():
 def formatar_horas_decimal(decimal_horas):
     """
     Transforma 8.6 em '8h 36min' e lida com saldos negativos.
+    Também aceita valores em formato HH:MM ou HH:MM:SS.
     """
     if decimal_horas is None:
         return "0h 00min"
+    
+    # Se já vier como string no formato HH:MM ou HH:MM:SS, retorna formatado
+    if isinstance(decimal_horas, str) and ':' in decimal_horas:
+        partes = decimal_horas.split(':')
+        horas = int(partes[0])
+        minutos = int(partes[1])
+        return f"{horas}h {minutos:02d}min"
         
     try:
         valor = float(decimal_horas)
