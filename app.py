@@ -228,12 +228,12 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        # 1. Pegamos o CPF exatamente como vem do site (com pontos e traços)
-        cpf_digitado = request.form.get('cpf') 
-        
-        # 2. Pegamos a senha e o tipo
-        senha = request.form.get('senha')
-        tipo_escolhido = request.form.get('tipo_usuario')
+    # O .strip() remove espaços invisíveis que estragam o login
+    cpf_digitado = request.form.get('cpf').strip() 
+    senha = request.form.get('senha').strip()
+    tipo_escolhido = request.form.get('tipo_usuario')
+
+    # ... restante do código igual ...
 
         # --- LOG DE SEGURANÇA (Ver no Render) ---
         print(f"DEBUG: Tentando login com CPF: {cpf_digitado}")
