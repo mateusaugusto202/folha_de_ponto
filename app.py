@@ -228,15 +228,19 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        # PEGUE O CPF DIRETO (Com pontos e traços, igual salvamos no banco)
+        # 1. Pegamos o CPF exatamente como vem do site (com pontos e traços)
         cpf_digitado = request.form.get('cpf') 
         
+        # 2. Pegamos a senha e o tipo
         senha = request.form.get('senha')
         tipo_escolhido = request.form.get('tipo_usuario')
 
+        # --- LOG DE SEGURANÇA (Ver no Render) ---
+        print(f"DEBUG: Tentando login com CPF: {cpf_digitado}")
+
         db = get_db()
         with db.cursor(pymysql.cursors.DictCursor) as cur:
-            # O banco agora vai encontrar '000.111.222-33' porque eles são idênticos!
+            # 3. O banco agora tem '000.111.222-33', então a busca vai funcionar!
             cur.execute("SELECT * FROM usuarios WHERE cpf = %s", (cpf_digitado,))
             user_data = cur.fetchone()
 
