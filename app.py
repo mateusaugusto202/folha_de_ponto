@@ -229,35 +229,27 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        # 1. Pega o CPF e remove TUDO que não for número
-        cpf_sujo = request.form.get('cpf', '')
-        cpf_limpo = re.sub(r'\D', '', cpf_sujo) 
-        
-        senha = request.form.get('senha', '').strip()
-        tipo_escolhido = request.form.get('tipo_usuario')
-
-        print(f"DEBUG: Tentando login com CPF LIMPO: '{cpf_limpo}'")
+        # Limpa o CPF que o usuário digitou para comparar com o banco
+        cpf_digitado = re.sub(r'\D', '', request.form.get('cpf', ''))
+        senha_digitada = request.form.get('senha')
 
         db = get_db()
         with db.cursor(pymysql.cursors.DictCursor) as cur:
-            # Agora buscamos no banco apenas os números
-            cur.execute("SELECT * FROM usuarios WHERE cpf = %s", (cpf_limpo,))
-            user_data = cur.fetchone()
+            # Busca o usuário pelo CPF limpo
+            cur.execute("SELECT * FROM usuarios WHERE cpf = %s", (cpf_digitado,))
+            user = cur.fetchone()
 
-        if user_data and check_password_hash(user_data['senha_hash'], senha):
-            if user_data['tipo_usuario'] != tipo_escolhido:
-                flash(f"Este CPF está cadastrado como {user_data['tipo_usuario']}.", "danger")
-                return render_template('login.html')
-            
-            user_obj = Usuario(user_data)
+        if user and check_password_hash(user['senha_hash'], senha_digitada):
+            # Se a senha estiver certa, cria a sessão
+            user_obj = User(user['id'], user['nome'], user['tipo_usuario'])
             login_user(user_obj)
             
-            if user_obj.tipo_usuario == 'admin':
+            # Redireciona conforme o cargo
+            if user['tipo_usuario'] == 'admin':
                 return redirect(url_for('dashboard_rh'))
             return redirect(url_for('area_funcionario'))
-
-        flash("CPF ou senha incorretos.", "danger")
-    
+        
+        flash('CPF ou senha incorretos.', 'danger')
     return render_template('login.html')
 
 @app.route('/logout')
