@@ -228,35 +228,33 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-    # O .strip() remove espaços invisíveis que estragam o login
-    cpf_digitado = request.form.get('cpf').strip() 
-    senha = request.form.get('senha').strip()
-    tipo_escolhido = request.form.get('tipo_usuario')
+        # Esta linha deve ter exatamente 8 espaços (ou 2 tabs) de recuo
+        cpf_digitado = request.form.get('cpf').strip()
+        senha = request.form.get('senha').strip()
+        tipo_escolhido = request.form.get('tipo_usuario')
 
-    # ... restante do código igual ...
-
-        # --- LOG DE SEGURANÇA (Ver no Render) ---
-        print(f"DEBUG: Tentando login com CPF: {cpf_digitado}")
+        print(f"DEBUG: Tentando login com CPF: '{cpf_digitado}'")
 
         db = get_db()
         with db.cursor(pymysql.cursors.DictCursor) as cur:
-            # 3. O banco agora tem '000.111.222-33', então a busca vai funcionar!
             cur.execute("SELECT * FROM usuarios WHERE cpf = %s", (cpf_digitado,))
             user_data = cur.fetchone()
 
         if user_data and check_password_hash(user_data['senha_hash'], senha):
             if user_data['tipo_usuario'] != tipo_escolhido:
-                flash(f"Selecione o perfil de {user_data['tipo_usuario']}.", "danger")
+                flash(f"Este CPF está cadastrado como {user_data['tipo_usuario']}.", "danger")
                 return render_template('login.html')
             
             user_obj = Usuario(user_data)
             login_user(user_obj)
             
-            return redirect(url_for('dashboard_rh') if user_obj.tipo_usuario == 'admin' else 'area_funcionario')
+            if user_obj.tipo_usuario == 'admin':
+                return redirect(url_for('dashboard_rh'))
+            return redirect(url_for('area_funcionario'))
 
         flash("CPF ou senha incorretos.", "danger")
+    
     return render_template('login.html')
-
 
 @app.route('/logout')
 @login_required
