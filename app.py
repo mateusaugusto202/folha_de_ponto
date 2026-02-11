@@ -3,6 +3,7 @@ import pdfkit
 import calendar
 import platform
 import os
+import re
 from datetime import datetime, date # Importado apenas uma vez
 
 from flask import Flask, render_template, request, redirect, url_for, flash, session, g, jsonify
@@ -228,16 +229,19 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        # Esta linha deve ter exatamente 8 espaços (ou 2 tabs) de recuo
-        cpf_digitado = request.form.get('cpf').strip()
-        senha = request.form.get('senha').strip()
+        # 1. Pega o CPF e remove TUDO que não for número
+        cpf_sujo = request.form.get('cpf', '')
+        cpf_limpo = re.sub(r'\D', '', cpf_sujo) 
+        
+        senha = request.form.get('senha', '').strip()
         tipo_escolhido = request.form.get('tipo_usuario')
 
-        print(f"DEBUG: Tentando login com CPF: '{cpf_digitado}'")
+        print(f"DEBUG: Tentando login com CPF LIMPO: '{cpf_limpo}'")
 
         db = get_db()
         with db.cursor(pymysql.cursors.DictCursor) as cur:
-            cur.execute("SELECT * FROM usuarios WHERE cpf = %s", (cpf_digitado,))
+            # Agora buscamos no banco apenas os números
+            cur.execute("SELECT * FROM usuarios WHERE cpf = %s", (cpf_limpo,))
             user_data = cur.fetchone()
 
         if user_data and check_password_hash(user_data['senha_hash'], senha):

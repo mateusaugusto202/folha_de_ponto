@@ -32,13 +32,10 @@
                             class="form-control" 
                             id="cpf" 
                             name="cpf" 
-                            placeholder="000.000.000-00" 
+                            placeholder="Digite apenas os 11 números" 
                             required 
-                            maxlength="14"
-                            autocomplete="username"
-                            autofocus
-                        >
-                        <small class="text-muted">Apenas números, sem pontos ou traços</small>
+                            maxlength="11">
+                        <small class="text-muted">Apenas números, sem pontos ou traços.</small>
                     </div>
                     
                     <!-- Campo Senha -->
@@ -122,40 +119,4 @@
     </div>
 </div>
 
-{% endblock %}
-
-{% block extra_js %}
-<script>
-    // Máscara visual enquanto digita
-    document.getElementById('cpf').addEventListener('input', function(e) {
-        let v = e.target.value.replace(/\D/g, '');
-        if (v.length > 11) v = v.slice(0, 11);
-        if (v.length > 9) v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
-        else if (v.length > 6) v = v.replace(/(\d{3})(\d{3})(\d{1,3})/, "$1.$2.$3");
-        else if (v.length > 3) v = v.replace(/(\d{3})(\d{1,3})/, "$1.$2");
-        e.target.value = v;
-    });
-
-    // Validação simplificada no envio
-    document.querySelector('form').addEventListener('submit', function(e) {
-        const cpfRaw = document.getElementById('cpf').value.replace(/\D/g, '');
-        if (cpfRaw.length !== 11) {
-            e.preventDefault();
-            alert('O CPF deve ter 11 dígitos.');
-            return;
-        }
-        // Mostra que está carregando
-        const btn = this.querySelector('button[type="submit"]');
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Entrando...';
-        btn.disabled = true;
-    });
-
-    function togglePassword() {
-        const s = document.getElementById('senha');
-        const i = document.getElementById('toggle-icon');
-        s.type = s.type === 'password' ? 'text' : 'password';
-        i.classList.toggle('fa-eye');
-        i.classList.toggle('fa-eye-slash');
-    }
-</script>
 {% endblock %}
