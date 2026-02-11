@@ -177,13 +177,12 @@ def calcular_horas(h1, h2):
 import os
 
 DB_CONFIG = {
-    "host": os.getenv("DB_HOST"),        # Pega o endereço da Aiven que você salvou no Render
-    "user": os.getenv("DB_USER"),        # Pega o usuário
-    "password": os.getenv("DB_PASSWORD"), # Pega a senha
-    "database": os.getenv("DB_NAME"),    # Pega o nome do banco
-    "port": int(os.getenv("DB_PORT", 15998)), # Pega a porta (e garante que é um número)
-    "charset": "utf8mb4",
-    "cursorclass": pymysql.cursors.DictCursor
+    'host': 'mysql-seu-host.aivencloud.com',
+    'port': 15998,
+    'user': 'avnadmin',
+    'password': 'AVNS_WzPp-efbewZnJbNuIM5',
+    'database': 'defaultdb',
+    'cursorclass': pymysql.cursors.DictCursor
 }
 
 def get_db():
@@ -1395,14 +1394,11 @@ def historico(usuario_id):
 
 # ==================== INICIALIZAÇÃO DA APLICAÇÃO ====================
 
-if __name__ == "__main__":
-    # O Render nos diz em qual porta rodar através da variável de ambiente 'PORT'
-    # Se não encontrar (ex: no seu PC), ele usa a 5000 por padrão.
+if __name__ == '__main__':
+    # Pega a porta que o Render fornece, ou usa 5000 se estiver no PC
     port = int(os.environ.get("PORT", 5000))
-    
-    # host='0.0.0.0' permite que o site seja acessado externamente
-    # debug=False é o recomendado para quando o site está "no ar"
-    app.run(host='0.0.0.0', port=port, debug=False)
+    # Rodamos com debug=True para você conseguir ver o erro na tela agora
+    app.run(host='0.0.0.0', port=port, debug=True)
 
 
 # ==================== NOTAS DE DESENVOLVIMENTO ====================
