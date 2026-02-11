@@ -274,23 +274,23 @@ def logout():
 
 @app.route('/cadastro', methods=['GET', 'POST'])
 def cadastro():
-    """
-    Rota de cadastro de novos usuários.
-    Cria uma solicitação pendente que precisa ser aprovada pelo RH.
-    """
     if request.method == 'POST':
         nome = request.form.get('nome')
-        cpf = request.form.get('cpf')
+        # --- AQUI ESTÁ A CORREÇÃO ---
+        # Pega o CPF e remove tudo que não for número antes de salvar
+        cpf_sujo = request.form.get('cpf', '')
+        cpf = re.sub(r'\D', '', cpf_sujo) 
+        # ----------------------------
+        
         email = request.form.get('email')
         senha = request.form.get('senha')
         
-        # Gera o hash da senha para armazenamento seguro
         senha_hash = generate_password_hash(senha)
 
         db = get_db()
         try:
             with db.cursor() as cur:
-                # Insere a solicitação com status 'pendente'
+                # Agora o 'cpf' aqui terá apenas os 11 números
                 cur.execute(
                     "INSERT INTO solicitacoes_cadastro (nome, cpf, email, senha_hash, status) VALUES (%s, %s, %s, %s, %s)",
                     (nome, cpf, email, senha_hash, 'pendente')
@@ -302,13 +302,11 @@ def cadastro():
 
         except pymysql.err.IntegrityError as e:
             db.rollback()
-            # Verifica se é erro de duplicação (CPF ou email já existem)
             if 'Duplicate entry' in str(e):
                 flash('Erro: CPF ou E-mail já estão cadastrados ou pendentes.', 'danger')
             else:
                 flash('Erro ao processar sua solicitação de cadastro.', 'danger')
-            # Retorna o formulário com os dados preenchidos
-            return render_template('cadastro.html', nome=nome, cpf=cpf, email=email)
+            return render_template('cadastro.html', nome=nome, cpf=cpf_sujo, email=email)
 
     return render_template('cadastro.html')
 
