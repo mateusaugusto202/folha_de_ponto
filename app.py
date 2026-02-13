@@ -121,7 +121,7 @@ def funcionario_required(f):
 
 # ==================== MODELO DE USUÁRIO PARA FLASK-LOGIN ====================
     
-class Usuario(UserMixin):
+class User(UserMixin): 
     def __init__(self, data):
         self.id = data.get('id')
         self.nome = data.get('nome')
@@ -141,18 +141,11 @@ class Usuario(UserMixin):
 def load_user(user_id):
     db = get_db()
     with db.cursor(pymysql.cursors.DictCursor) as cur:
-        cur.execute("""
-            SELECT id, nome, tipo_usuario 
-            FROM usuarios 
-            WHERE id = %s
-        """, (user_id,))
-        
+        cur.execute("SELECT * FROM usuarios WHERE id = %s", (user_id,))
         user_data = cur.fetchone()
-        
         if user_data:
-            # IMPORTANTE: Use 'User' (o nome da classe que você criou lá em cima)
-            return User(user_data['id'], user_data['nome'], user_data['tipo_usuario'])
-        return None
+            return User(user_data) # Passa o dicionário 'user_data' para o __init__
+    return None
 
 
 # ==================== FUNÇÕES AUXILIARES ====================
