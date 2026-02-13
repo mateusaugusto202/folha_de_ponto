@@ -13,6 +13,8 @@ from functools import wraps
 
 # ==================== CONFIGURAÇÃO DA APLICAÇÃO ====================
 
+fuso_br = pytz.timezone('America/Sao_Paulo')
+
 from flask_login import UserMixin
 
 # Adicione esta classe logo abaixo dos seus imports
