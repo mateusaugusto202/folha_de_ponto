@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+                    {% extends "base.html" %}
 {% block title %}Meu Ponto - {{ current_user.nome }}{% endblock %}
 
 {% block content %}
@@ -75,9 +75,10 @@
                         <h3 class="mb-0 mt-2 fw-bold {% if (saldo or 0) >= 0 %}text-success{% else %}text-danger{% endif %}">
                             {{ formatar_horas_decimal(saldo or 0) }}
                         </h3>
-                  <div class="saldo-circle {% if saldo and saldo >= 0 %}saldo-positive{% else %}saldo-negative{% endif %}">
-    <i class="fas {% if saldo and saldo >= 0 %}fa-check-circle{% else %}fa-exclamation-circle{% endif %} fa-2x saldo-icon"></i>
-</div>
+                    </div>
+                    <div style="width: 60px; height: 60px; background: var(--rosa-claro-fundo); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-business-time fa-2x" style="color: var(--rosa-principal);"></i>
+                    </div>
                 </div>
             </div>
         </div>
@@ -85,6 +86,90 @@
 </div>
 
 <!-- ==================== CARD PRINCIPAL - REGISTRO DE PONTO ==================== -->
+<!-- Cabeçalho com Informações da Empresa e Funcionário -->
+<div class="card shadow mb-3" style="border: 2px solid var(--cinza-texto);">
+    <div class="card-body p-0">
+        <table style="width: 100%; border-collapse: collapse;">
+            <!-- Linha 1: Empresa e CNPJ -->
+            <tr>
+                <td style="border: 1px solid var(--cinza-texto); padding: 0.5rem; width: 60%;">
+                    <small style="font-size: 0.7rem; color: var(--cinza-secundario);">EMPREGADOR / NOME - EMPRESA:</small><br>
+                    <strong style="font-size: 0.9rem;">Empresária Online Ltda</strong>
+                </td>
+                <td style="border: 1px solid var(--cinza-texto); padding: 0.5rem; width: 40%;">
+                    <small style="font-size: 0.7rem; color: var(--cinza-secundario);">CEI/CNPJ:</small><br>
+                    <strong style="font-size: 0.9rem;">46.081.224/0001-76</strong>
+                </td>
+            </tr>
+            
+            <!-- Linha 2: Endereço Completo -->
+            <tr>
+                <td style="border: 1px solid var(--cinza-texto); padding: 0.5rem; width: 40%;">
+                    <small style="font-size: 0.7rem; color: var(--cinza-secundario);">ENDEREÇO / LOGRADOURO:</small><br>
+                    <strong style="font-size: 0.9rem;">Av. Castelo Branco</strong>
+                </td>
+                <td style="border: 1px solid var(--cinza-texto); padding: 0.5rem; width: 20%;">
+                    <small style="font-size: 0.7rem; color: var(--cinza-secundario);">Nº</small><br>
+                    <strong style="font-size: 0.9rem;">762 / sl 403</strong>
+                </td>
+                <td style="border: 1px solid var(--cinza-texto); padding: 0.5rem; width: 20%;">
+                    <small style="font-size: 0.7rem; color: var(--cinza-secundario);">BAIRRO / DISTRITO</small><br>
+                    <strong style="font-size: 0.9rem;">Horto</strong>
+                </td>
+                <td style="border: 1px solid var(--cinza-texto); padding: 0.5rem; width: 15%;">
+                    <small style="font-size: 0.7rem; color: var(--cinza-secundario);">CIDADE</small><br>
+                    <strong style="font-size: 0.9rem;">Ipatinga</strong>
+                </td>
+                <td style="border: 1px solid var(--cinza-texto); padding: 0.5rem; width: 5%;">
+                    <small style="font-size: 0.7rem; color: var(--cinza-secundario);">UF</small><br>
+                    <strong style="font-size: 0.9rem;">MG</strong>
+                </td>
+            </tr>
+            
+            <!-- Linha 3: Dados do Funcionário -->
+            <tr>
+                <td style="border: 1px solid var(--cinza-texto); padding: 0.5rem;">
+                    <small style="font-size: 0.7rem; color: var(--cinza-secundario);">EMPREGADO(A):</small><br>
+                    <strong style="font-size: 0.9rem; color: var(--rosa-principal);">{{ current_user.nome }}</strong>
+                </td>
+                <td colspan="2" style="border: 1px solid var(--cinza-texto); padding: 0.5rem;">
+                    <small style="font-size: 0.7rem; color: var(--cinza-secundario);">HORÁRIO DE TRABALHO</small><br>
+                    <strong style="font-size: 0.9rem;">
+                        {% if current_user.carga_horaria > 6 %}
+                            09:00 - 18:00 / 08:00 - 12:00
+                        {% else %}
+                            09:00 - 13:00
+                        {% endif %}
+                    </strong>
+                </td>
+                <td colspan="2" style="border: 1px solid var(--cinza-texto); padding: 0.5rem;">
+                    <small style="font-size: 0.7rem; color: var(--cinza-secundario);">DATA DE ADMISSÃO</small><br>
+                    <strong style="font-size: 0.9rem;">
+                        {{ current_user.data_admissao.strftime('%d/%m/%Y') if current_user.data_admissao else '06/10/2022' }}
+                    </strong>
+                </td>
+            </tr>
+            
+            <!-- Linha 4: Função e Período -->
+            <tr>
+                <td style="border: 1px solid var(--cinza-texto); padding: 0.5rem; width: 40%;">
+                    <small style="font-size: 0.7rem; color: var(--cinza-secundario);">FUNÇÃO</small><br>
+                    <strong style="font-size: 0.9rem;">{{ current_user.cargo or 'Analista de Sistemas' }}</strong>
+                </td>
+                <td style="border: 1px solid var(--cinza-texto); padding: 0.5rem; width: 20%;">
+                    <small style="font-size: 0.7rem; color: var(--cinza-secundario);">MÊS</small><br>
+                    <strong style="font-size: 0.9rem;">{{ hoje_formatada.split('/')[1] if hoje_formatada else '' }}</strong>
+                </td>
+                <td colspan="3" style="border: 1px solid var(--cinza-texto); padding: 0.5rem; width: 40%;">
+                    <small style="font-size: 0.7rem; color: var(--cinza-secundario);">ANO</small><br>
+                    <strong style="font-size: 0.9rem;">{{ hoje_formatada.split('/')[2] if hoje_formatada else '2026' }}</strong>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<!-- Card de Registro de Ponto -->
 <div class="card shadow-lg mb-5">
     <div class="card-header">
         <div class="d-flex justify-content-between align-items-center">

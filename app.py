@@ -130,9 +130,11 @@ class User(UserMixin):
         self.senha_hash = data.get('senha_hash')
         self.tipo_usuario = data.get('tipo_usuario')
         self.status = data.get('status')
-        # Forçamos a carga horária para 8.0 para garantir cálculos precisos no PDF [cite: 2026-01-08]
+        # Forçamos a carga horária para 8.0 para garantir cálculos precisos no PDF
         self.carga_horaria = float(8.0) 
         self.tempo_intervalo = data.get('tempo_intervalo', 60)
+        self.cargo = data.get('cargo', 'Funcionário') # Pega o cargo ou define um padrão
+        self.data_admissao = data.get('data_admissao') # Pega a data do banco
 
     def get_id(self):
         return str(self.id)
@@ -341,13 +343,15 @@ def area_funcionario():
         carga_segundos = converter_carga_para_segundos(user_data['carga_horaria'])
 
     return render_template('area_funcionario.html', 
-                            assinaturas_pendentes=assinaturas_pendentes, # Não esqueça de passar isso!
+                            assinaturas_pendentes=assinaturas_pendentes,
                             carga_horaria_segundos=carga_segundos,
                             ponto_hoje=ponto_hoje, 
                             historico=historico, 
                             saldo=saldo_acumulado,
                             hoje=hoje,
-                            hoje_formatada=hoje.strftime('%d/%m/%Y'))
+                            hoje_formatada=hoje.strftime('%d/%m/%Y'),
+                            formatar_horas_decimal=formatar_horas_decimal 
+)
 
 
 import calendar
