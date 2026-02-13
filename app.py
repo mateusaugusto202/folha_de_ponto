@@ -247,11 +247,11 @@ def login():
             user = cur.fetchone()
 
         if user and check_password_hash(user['senha_hash'], senha_digitada):
-            # Se a senha estiver certa, cria a sessão
-            user_obj = User(user['id'], user['nome'], user['tipo_usuario'])
+           
+            user_obj = User(user) 
+            
             login_user(user_obj)
             
-            # Redireciona conforme o cargo
             if user['tipo_usuario'] == 'admin':
                 return redirect(url_for('dashboard_rh'))
             return redirect(url_for('area_funcionario'))
