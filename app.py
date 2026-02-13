@@ -12,6 +12,17 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 
 # ==================== CONFIGURAÇÃO DA APLICAÇÃO ====================
+
+from flask_login import UserMixin
+
+# Adicione esta classe logo abaixo dos seus imports
+class User(UserMixin):
+    def __init__(self, id, nome, tipo_usuario):
+        self.id = id
+        self.nome = nome
+        self.tipo_usuario = tipo_usuario
+
+
 app = Flask(__name__)
 
 # Configuração Inteligente do Motor de PDF (Windows vs Linux)
@@ -126,18 +137,12 @@ class Usuario(UserMixin):
     def get_id(self):
         return str(self.id)
 
-
 @login_manager.user_loader
 def load_user(user_id):
-    """
-    Função exigida pelo Flask-Login para carregar um usuário a partir do ID.
-    Chamada automaticamente em cada requisição para usuários autenticados.
-    """
     db = get_db()
-    # DictCursor faz com que os resultados sejam dicionários em vez de tuplas
     with db.cursor(pymysql.cursors.DictCursor) as cur:
         cur.execute("""
-            SELECT id, nome, cpf, email, senha_hash, tipo_usuario, status, carga_horaria 
+            SELECT id, nome, tipo_usuario 
             FROM usuarios 
             WHERE id = %s
         """, (user_id,))
@@ -145,7 +150,8 @@ def load_user(user_id):
         user_data = cur.fetchone()
         
         if user_data:
-            return Usuario(user_data)
+            # IMPORTANTE: Use 'User' (o nome da classe que você criou lá em cima)
+            return User(user_data['id'], user_data['nome'], user_data['tipo_usuario'])
         return None
 
 
