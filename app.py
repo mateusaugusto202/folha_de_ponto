@@ -177,13 +177,12 @@ def calcular_horas(h1, h2):
 import os
 
 DB_CONFIG = {
-    "host": os.getenv("DB_HOST"),        # Pega o endereço da Aiven que você salvou no Render
-    "user": os.getenv("DB_USER"),        # Pega o usuário
-    "password": os.getenv("DB_PASSWORD"), # Pega a senha
-    "database": os.getenv("DB_NAME"),    # Pega o nome do banco
-    "port": int(os.getenv("DB_PORT", 15998)), # Pega a porta (e garante que é um número)
-    "charset": "utf8mb4",
-    "cursorclass": pymysql.cursors.DictCursor
+    'host': 'mysql-1a1521ca-mateusaugustomedeiros-4eb6.a.aivencloud.com', # Cuidado para não deixar espaços!
+    'port': 15998, # Coloque a porta numérica do Aiven (geralmente 12345 ou similar)
+    'user': 'avnadmin',
+    'password': 'SUA_SAVNS_WzPp-efbewZnJbNuIM5',
+    'database': 'defaultdb',
+    'cursorclass': pymysql.cursors.DictCursor
 }
 
 def get_db():
