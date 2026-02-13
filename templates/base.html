@@ -154,10 +154,17 @@
     
     <!-- ==================== SCRIPTS ==================== -->
     <script>
-        // Relógio Digital
+        // Relógio Digital - Horário de Brasília (GMT-3)
         function atualizarRelogio() {
             const agora = new Date();
-            const tempo = agora.toLocaleTimeString('pt-BR');
+            
+            // Converte para horário de Brasília (América/São_Paulo)
+            const tempo = agora.toLocaleTimeString('pt-BR', {
+                timeZone: 'America/Sao_Paulo',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
             
             const relogio = document.getElementById('relogio-digital');
             const relogioMobile = document.getElementById('relogio-digital-mobile');
