@@ -144,9 +144,13 @@
                 </td>
                 <td colspan="2" style="border: 1px solid var(--cinza-texto); padding: 0.5rem;">
                     <small style="font-size: 0.7rem; color: var(--cinza-secundario);">DATA DE ADMISSÃO</small><br>
-                    <strong style="font-size: 0.9rem;">
-                        {{ current_user.data_admissao.strftime('%d/%m/%Y') if current_user.data_admissao else '06/10/2022' }}
-                    </strong>
+                    <strong>
+    {% if current_user.data_admissao and current_user.data_admissao is not string %}
+        {{ current_user.data_admissao.strftime('%d/%m/%Y') }}
+    {% else %}
+        {{ current_user.data_admissao or '06/10/2022' }}
+    {% endif %}
+</strong>
                 </td>
             </tr>
             
