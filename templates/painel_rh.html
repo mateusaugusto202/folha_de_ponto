@@ -127,41 +127,42 @@
             <table class="table table-hover mb-0">
                 <thead>
                     <tr class="text-center">
-                        <th class="text-left">Nome</th>
-                        <th>Status</th>
-                        <th>Cargo/Carga</th>
-                        <th>Saldo Total</th>
-                        <th style="min-width: 280px;">Solicitar Assinatura</th>
-                        <th style="min-width: 180px;">Ações</th>
+                        <th class="text-left" style="min-width: 180px;">Nome</th>
+                        <th style="width: 90px;">Status</th>
+                        <th style="width: 100px;">Cargo</th>
+                        <th style="width: 90px;">Saldo</th>
+                        <th style="width: 240px;">Assinatura</th>
+                        <th style="width: 140px;">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for usuario in usuarios %}
                     <tr>
                         <td>
-                            <strong class="text-rosa">{{ usuario.nome }}</strong>
-                            <br>
-                            <small class="text-muted">{{ usuario.email }}</small>
+                            <div style="max-width: 200px;">
+                                <strong class="text-rosa d-block" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ usuario.nome }}</strong>
+                                <small class="text-muted d-block" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ usuario.email }}</small>
+                            </div>
                         </td>
                         <td class="text-center">
-                            <span class="badge badge-secondary">
-                                <i class="fas fa-circle" style="font-size: 0.5rem;"></i> OFFLINE
+                            <span class="badge badge-secondary" style="font-size: 0.7rem;">
+                                OFFLINE
                             </span>
                         </td>
                         <td class="text-center">
-                            <span class="badge badge-danger">{{ usuario.tipo_usuario.upper() }}</span>
+                            <span class="badge badge-danger" style="font-size: 0.7rem;">{{ usuario.tipo_usuario.upper() }}</span>
                             <br>
-                            <small class="text-muted">{{ usuario.carga_horaria or 8 }}h/dia</small>
+                            <small class="text-muted" style="font-size: 0.7rem;">{{ usuario.carga_horaria or 8 }}h</small>
                         </td>
                         <td class="text-center">
-                            <strong class="{% if (usuario.saldo_total or 0) >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            <strong class="{% if (usuario.saldo_total or 0) >= 0 %}text-success{% else %}text-danger{% endif %}" style="font-size: 0.85rem;">
                                 {{ formatar_horas_decimal(usuario.saldo_total or 0) }}
                             </strong>
                         </td>
                         <td>
                             <form action="{{ url_for('solicitar_assinatura') }}" 
                                   method="POST" 
-                                  class="d-flex align-items-center gap-2 justify-content-center">
+                                  class="d-flex align-items-center gap-1 justify-content-center flex-nowrap">
                                 <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
                                 <input 
                                     type="number" 
@@ -170,7 +171,7 @@
                                     placeholder="Mês" 
                                     min="1" 
                                     max="12"
-                                    style="width: 70px;"
+                                    style="width: 55px; font-size: 0.8rem;"
                                     required
                                 >
                                 <input 
@@ -180,28 +181,30 @@
                                     value="2026" 
                                     min="2020" 
                                     max="2030"
-                                    style="width: 90px;"
+                                    style="width: 70px; font-size: 0.8rem;"
                                     required
                                 >
-                                <button type="submit" class="btn btn-rosa btn-sm">
-                                    SOLICITAR
+                                <button type="submit" class="btn btn-rosa btn-sm" style="font-size: 0.7rem; padding: 0.35rem 0.75rem;">
+                                    Enviar
                                 </button>
                             </form>
                         </td>
                         <td class="text-center">
-                            <div class="d-flex gap-2 justify-content-center flex-wrap">
+                            <div class="d-flex gap-1 justify-content-center flex-nowrap">
                                 <a href="{{ url_for('historico_individual', usuario_id=usuario.id) }}" 
                                    class="btn btn-sm btn-outline-rosa"
+                                   style="font-size: 0.7rem; padding: 0.35rem 0.75rem;"
                                    title="Ver histórico completo">
-                                    <i class="fas fa-history"></i> Histórico
+                                    Histórico
                                 </a>
                                 
                                 {% if usuario.tipo_usuario != 'admin' %}
                                 <a href="{{ url_for('promover_admin', usuario_id=usuario.id) }}" 
                                    class="btn btn-sm btn-warning"
+                                   style="font-size: 0.7rem; padding: 0.35rem 0.75rem;"
                                    onclick="return confirm('Promover {{ usuario.nome }} a Administrador?')"
                                    title="Promover a Admin">
-                                    <i class="fas fa-arrow-up"></i> Promover
+                                    Promover
                                 </a>
                                 {% endif %}
                             </div>

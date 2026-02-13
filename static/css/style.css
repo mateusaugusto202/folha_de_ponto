@@ -6,11 +6,11 @@
 
 /* ==================== 1. VARIÁVEIS CSS (Design Tokens) ==================== */
 :root {
-    /* Cores Principais - Rosa Profissional */
-    --rosa-principal: #E91E63;
-    --rosa-suave: #F06292;
+    /* Cores Principais - Rosa Profissional SUAVIZADO */
+    --rosa-principal: #F06292;        /* Era #E91E63 - agora mais suave */
+    --rosa-suave: #F48FB1;            /* Era #F06292 - agora mais claro */
     --rosa-claro-fundo: #FCE4EC;
-    --rosa-hover: #C2185B;
+    --rosa-hover: #EC407A;            /* Era #C2185B - agora mais suave */
     
     /* Cores Neutras */
     --branco: #FFFFFF;
@@ -25,11 +25,11 @@
     --danger: #F44336;
     --info: #2196F3;
     
-    /* Sombras */
-    --shadow-sm: 0 2px 4px rgba(0,0,0,0.08);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.12);
-    --shadow-lg: 0 8px 24px rgba(0,0,0,0.16);
-    --shadow-rosa: 0 4px 12px rgba(233, 30, 99, 0.2);
+    /* Sombras SUAVIZADAS */
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+    --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+    --shadow-lg: 0 4px 16px rgba(0,0,0,0.10);
+    --shadow-rosa: 0 2px 8px rgba(240, 98, 146, 0.15);
     
     /* Raios de borda */
     --radius-sm: 8px;
@@ -298,19 +298,19 @@ p {
 .card-header {
     background: linear-gradient(135deg, var(--rosa-principal) 0%, var(--rosa-suave) 100%);
     color: var(--branco);
-    padding: 1.25rem 1.5rem;
+    padding: 0.875rem 1.25rem;  /* Reduzido de 1.25rem 1.5rem */
     border-bottom: none;
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1rem;  /* Reduzido de 1.1rem */
 }
 
 .card-body {
-    padding: 1.5rem;
+    padding: 1.25rem;  /* Reduzido de 1.5rem */
 }
 
 .card-footer {
     background: var(--cinza-fundo);
-    padding: 1rem 1.5rem;
+    padding: 0.75rem 1.25rem;  /* Reduzido de 1rem 1.5rem */
     border-top: 1px solid var(--cinza-claro);
 }
 
@@ -389,9 +389,9 @@ input[type="radio"] {
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
-    padding: 0.375rem 0.75rem;
+    padding: 0.25rem 0.625rem;  /* Reduzido de 0.375rem 0.75rem */
     border-radius: var(--radius-pill);
-    font-size: 0.8rem;
+    font-size: 0.75rem;  /* Reduzido de 0.8rem */
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -445,6 +445,7 @@ input[type="radio"] {
     -webkit-overflow-scrolling: touch;
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
+    width: 100%;
 }
 
 .table {
@@ -452,6 +453,8 @@ input[type="radio"] {
     border-collapse: separate;
     border-spacing: 0;
     background: var(--branco);
+    margin-bottom: 0;  /* Remove margem extra */
+    table-layout: auto;  /* Permite ajuste automático das colunas */
 }
 
 .table thead {
@@ -460,13 +463,14 @@ input[type="radio"] {
 }
 
 .table thead th {
-    padding: 1rem;
+    padding: 0.75rem 0.875rem;  /* Reduzido de 1rem */
     font-weight: 700;
     text-align: left;
-    font-size: 0.875rem;
+    font-size: 0.8rem;  /* Reduzido de 0.875rem */
     text-transform: uppercase;
     letter-spacing: 0.5px;
     border: none;
+    white-space: nowrap;  /* Evita quebra de linha */
 }
 
 .table tbody tr {
@@ -483,9 +487,26 @@ input[type="radio"] {
 }
 
 .table td {
-    padding: 1rem;
+    padding: 0.75rem 0.875rem;  /* Reduzido de 1rem */
     vertical-align: middle;
     color: var(--cinza-texto);
+}
+
+/* Células que podem ter conteúdo longo */
+.table td > div {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Forms dentro de tabelas mais compactos */
+.table form {
+    margin: 0;
+}
+
+.table .form-control-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    height: auto;
 }
 
 /* Tabela Striped */
@@ -1011,30 +1032,4 @@ textarea:focus {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
-}
-
-/* ==================== SALDO CIRCLE - Indicador de Saldo ==================== */
-.saldo-circle {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.saldo-circle.saldo-positive {
-    background-color: rgba(76, 175, 80, 0.1);
-}
-
-.saldo-circle.saldo-negative {
-    background-color: rgba(244, 67, 54, 0.1);
-}
-
-.saldo-icon.saldo-positive {
-    color: #28a745;
-}
-
-.saldo-icon.saldo-negative {
-    color: #dc3545;
 }
