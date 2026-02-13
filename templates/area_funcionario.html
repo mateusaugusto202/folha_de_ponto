@@ -156,19 +156,32 @@
             
             <!-- Linha 4: Função e Período -->
             <tr>
-                <td style="border: 1px solid var(--cinza-texto); padding: 0.5rem; width: 40%;">
-                    <small style="font-size: 0.7rem; color: var(--cinza-secundario);">FUNÇÃO</small><br>
-                    <strong style="font-size: 0.9rem;">{{ current_user.cargo or 'Analista de Sistemas' }}</strong>
-                </td>
-                <td style="border: 1px solid var(--cinza-texto); padding: 0.5rem; width: 20%;">
-                    <small style="font-size: 0.7rem; color: var(--cinza-secundario);">MÊS</small><br>
-                    <strong style="font-size: 0.9rem;">{{ hoje_formatada.split('/')[1] if hoje_formatada else '' }}</strong>
-                </td>
-                <td colspan="3" style="border: 1px solid var(--cinza-texto); padding: 0.5rem; width: 40%;">
-                    <small style="font-size: 0.7rem; color: var(--cinza-secundario);">ANO</small><br>
-                    <strong style="font-size: 0.9rem;">{{ hoje_formatada.split('/')[2] if hoje_formatada else '2026' }}</strong>
-                </td>
-            </tr>
+    <td style="border: 1px solid var(--cinza-texto); padding: 0.5rem; width: 40%;">
+        <small style="font-size: 0.7rem; color: var(--cinza-secundario);">FUNÇÃO</small><br>
+        <strong style="font-size: 0.9rem;">{{ current_user.cargo or 'Analista de Sistemas' }}</strong>
+    </td>
+    <td style="border: 1px solid var(--cinza-texto); padding: 0.5rem; width: 20%;">
+        <small style="font-size: 0.7rem; color: var(--cinza-secundario);">MÊS</small><br>
+        <strong style="font-size: 0.9rem;">
+            {# Proteção contra erros de split #}
+            {% if hoje_formatada and '/' in hoje_formatada %}
+                {{ hoje_formatada.split('/')[1] }}
+            {% else %}
+                --
+            {% endif %}
+        </strong>
+    </td>
+    <td colspan="3" style="border: 1px solid var(--cinza-texto); padding: 0.5rem; width: 40%;">
+        <small style="font-size: 0.7rem; color: var(--cinza-secundario);">ANO</small><br>
+        <strong style="font-size: 0.9rem;">
+            {% if hoje_formatada and '/' in hoje_formatada %}
+                {{ hoje_formatada.split('/')[2] }}
+            {% else %}
+                2026
+            {% endif %}
+        </strong>
+    </td>
+</tr>
         </table>
     </div>
 </div>
