@@ -123,6 +123,7 @@ def funcionario_required(f):
     
 class User(UserMixin): 
     def __init__(self, data):
+        # Usamos .get() para evitar KeyError se a coluna não existir
         self.id = data.get('id')
         self.nome = data.get('nome')
         self.cpf = data.get('cpf')
@@ -130,14 +131,19 @@ class User(UserMixin):
         self.senha_hash = data.get('senha_hash')
         self.tipo_usuario = data.get('tipo_usuario')
         self.status = data.get('status')
-        # Forçamos a carga horária para 8.0 para garantir cálculos precisos no PDF
-        self.carga_horaria = float(8.0) 
+        
+        # Garante que a carga horária seja float, mesmo que venha None ou String
+        try:
+            self.carga_horaria = float(data.get('carga_horaria', 8.0) or 8.0)
+        except (ValueError, TypeError):
+            self.carga_horaria = 8.0
+
         self.tempo_intervalo = data.get('tempo_intervalo', 60)
-        self.cargo = data.get('cargo', 'Funcionário') # Pega o cargo ou define um padrão
-        self.data_admissao = data.get('data_admissao') # Pega a data do banco
+        self.cargo = data.get('cargo') or 'Analista de Sistemas'
+        self.data_admissao = data.get('data_admissao') 
 
     def get_id(self):
-        return str(self.id)
+        return str(self.id) if self.id else None
 
 @login_manager.user_loader
 def load_user(user_id):
